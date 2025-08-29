@@ -1,0 +1,29 @@
+{
+  "name": "cms_backend_task",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": " nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shivani-Chouksey/CMS_Backend_Task.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shivani-Chouksey/CMS_Backend_Task/issues"
+  },
+  "homepage": "https://github.com/Shivani-Chouksey/CMS_Backend_Task#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.3",
+    "nodemon": "^3.1.10",
+    "sequelize": "^6.37.7"
+  }
+}
