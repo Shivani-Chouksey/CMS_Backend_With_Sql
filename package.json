@@ -20,8 +20,11 @@
   "homepage": "https://github.com/Shivani-Chouksey/CMS_Backend_Task#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.3",
     "nodemon": "^3.1.10",
     "sequelize": "^6.37.7"

@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db-connection.js';
+import bcrypt from 'bcrypt';
 
 export const CmsUserSchema = sequelize.define('cms-user', {
     username: {
@@ -22,14 +23,31 @@ export const CmsUserSchema = sequelize.define('cms-user', {
         type: DataTypes.ENUM("admin", "super-admin"),
         allowNull: false,
         defaultValue: "admin",
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
     }
 },
     {
         freezeTableName: true,
     },
+    // {
+    //     hooks: {
+    //         matchPassword: (password) => {
+    //             console.log("MatchPassword Hook Called");
+    //             return bcrypt.compare(password, this.password)
+    //         }
+    //     }
+    // }
 )
 
 
+CmsUserSchema.addHook("beforeCreate", async ({ dataValues }) => {
+    // console.info("Before Creating CMS User", dataValues);
+    const saltRounds = 10;
+    dataValues.password = await bcrypt.hash(dataValues.password, saltRounds);
+})
 
 
 
