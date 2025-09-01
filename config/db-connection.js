@@ -25,11 +25,11 @@ export const DbConnection = async () => {
         db.cmsUser = CmsUser(sequelize);
         db.news = News(sequelize)
 
-        
+
         // Assosications - Table Relations
         db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
         db.news.belongsTo(db.cmsUser, { foreignKey: 'created_user_id' })
-        await sequelize.sync({ alter: false });
+        await sequelize.sync();
 
 
         console.log("Database Connected Successfully")

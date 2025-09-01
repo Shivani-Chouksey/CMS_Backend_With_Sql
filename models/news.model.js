@@ -15,18 +15,24 @@ function News(sequelize) {
                 type: DataTypes.STRING,
 
             },
-            imagePath: {
+            news_poster: {
                 type: DataTypes.STRING,
 
             },
             created_user_id: {
-                type: DataTypes.UUID
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'cms_user', // match your actual table name
+                    key: 'id'
+                }
+
             }
         },
         {
             timestamps: true,
             freezeTableName: true,
-        },)
+        })
 
 }
 
