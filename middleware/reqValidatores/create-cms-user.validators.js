@@ -49,7 +49,8 @@ export const CmsAdminCustomReqValidator = async (req, res, next) => {
 export const UpdateCmsuserValidator = async (req, res, next) => {
     try {
         const schema = joi.object({
-            role: joi.string().required().valid('super-admin', 'admin')
+            role: joi.string().required().valid('super-admin', 'admin'),
+            isActive:joi.boolean().optional()
         })
 
         const isValid = await schema.validate(req.body)

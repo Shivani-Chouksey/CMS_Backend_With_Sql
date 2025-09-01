@@ -7,11 +7,11 @@ const router = express.Router();
 
 router.post("/create-cms-super-admin", CmsSuperAdminCustomReqValidator, CreateCmsSuperAdmin);
 router.post("/login", LoginCmsUser);
-router.get("/all-cms-user",Is_Super_Admin, GetAllCMSUser);
+router.get("/all-cms-user", Is_Super_Admin, GetAllCMSUser);
 router.post('/create-cms-admin', CmsAdminCustomReqValidator, Is_Super_Admin, CreateCmsAdmin)
-router.delete("/drop/:id",Is_Super_Admin, DeleteCmsUser);
+router.delete("/drop/:id", Is_Super_Admin, DeleteCmsUser);
 router.patch("/update/:id", UpdateCmsuserValidator, Is_Super_Admin, UpdateCmsUser);
-router.get("/current-user",Is_Logged_In,GetCurrentCmsUser)
+router.get("/current-user", Is_Logged_In, GetCurrentCmsUser)
 
 router.delete("/drop-table", DropCmsuserTable)
 

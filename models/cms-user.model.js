@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db-connection.js';
 import bcrypt from 'bcrypt';
 
-export const CmsUserSchema = sequelize.define('cms-user', {
+export const CmsUserSchema = sequelize.define('cms_user', {
     username: {
         type: DataTypes.STRING,
         allowNull: false,

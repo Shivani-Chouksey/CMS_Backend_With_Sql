@@ -14,6 +14,6 @@ await DbConnection().then(() => {
         console.log(`Server running on port ${process.env.PORT}`);
     });
 }).catch((error) => {
-    console.log("Database Connection Failed", error);
+    console.log("Database Connection Failed --->", error);
 });
 
