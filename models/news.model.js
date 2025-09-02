@@ -12,7 +12,7 @@ function News(sequelize) {
                 unique: true
             },
             content: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
 
             },
             news_poster: {

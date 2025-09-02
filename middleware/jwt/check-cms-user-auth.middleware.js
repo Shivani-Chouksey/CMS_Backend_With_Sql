@@ -4,20 +4,20 @@ import { db } from '../../config/db-connection.js';
 export const Is_Super_Admin = async (req, res, next) => {
     try {
         const token = req.headers.authorization.replace('Bearer', '').trim()
-        console.log("Is_Super_Admin Middleware token --->", token);
+        // console.log("Is_Super_Admin Middleware token --->", token);
         if (!token || token == undefined) {
             return res.status(401).json({ Success: false, message: "Token Not Exists " });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
-        console.log('IsVerified', IsVerified);
+        // console.log('IsVerified', IsVerified);
         if (!IsVerified) {
             return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
         }
 
         const { dataValues } = await db.cmsUser.findOne({ where: { id: IsVerified?.id } });
-        console.log("FoundUser", dataValues);
+        // console.log("FoundUser", dataValues);
 
         const IsSuperAdmin = dataValues?.role === 'super-admin'
 
@@ -64,23 +64,22 @@ export const Is_Logged_In = async (req, res, next) => {
 
 export const Is_Super_Admin_or_Admin = async (req, res, next) => {
     try {
-        console.log("req.headers.authorization", req.headers.authorization);
 
         const token = req.headers.authorization?.replace('Bearer', '').trim()
-        console.log("Is_Super_Admin Middleware token --->", token, token == undefined);
+        // console.log("Is_Super_Admin Middleware token --->", token, token == undefined);
         if (!token || token == undefined) {
             return res.status(401).json({ Success: false, message: "Token Not Exists" });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
-        console.log('IsVerified', IsVerified);
+        // console.log('IsVerified', IsVerified);
         if (!IsVerified) {
             return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
         }
 
         const { dataValues } = await db.cmsUser.findOne({ where: { id: IsVerified?.id } });
-        console.log("FoundUser", dataValues);
+        // console.log("FoundUser", dataValues);
 
         const IsAutheried = dataValues?.role === 'super-admin' || dataValues?.role === 'admin'
 

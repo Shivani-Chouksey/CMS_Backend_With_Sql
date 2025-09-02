@@ -8,7 +8,8 @@ const storage = multer.diskStorage(
             callback(null, "./public/news")
         },
         filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+            const uniqueSuffix = Date.now() + '-' + req.body?.title
+            // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
               console.log("File Details ---> Multer Middleware -->", file);
             cb(null, file.fieldname + '-' + uniqueSuffix)
         }
