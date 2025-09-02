@@ -20,7 +20,7 @@ export const CreateNews = async (req, res) => {
         }
 
         const responseData = await db.news.create({ ...req.body, created_user_id: req.user?.id, news_poster: req.file?.path })
-        return res.status(201).json({ Success: true, message: "New Created", data: responseData })
+        return res.status(201).json({ Success: true, message: "News Created", data: responseData })
 
 
     } catch (error) {

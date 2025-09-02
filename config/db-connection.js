@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize";
 import mysql from 'mysql2/promise';
 import { News } from "../models/news.model.js";
 import { CmsUser } from "../models/cms-user.model.js";
+import { Company } from "../models/company.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI)
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -24,7 +25,7 @@ export const DbConnection = async () => {
         // init models and add them inside  exported db object
         db.cmsUser = CmsUser(sequelize);
         db.news = News(sequelize)
-
+        db.company = Company(sequelize)
 
         // Assosications - Table Relations
         db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
