@@ -35,9 +35,21 @@ export const CreateBlog = async (req, res) => {
 
 export const GetAllBlog = async (req, res) => {
     try {
-        const responseData = await db.blog.findAll({ include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
+        console.log(req.query);
+        const { page, limit } = req.query
+        const skipValue = (parseInt(page) - 1) * parseInt(limit)
+        const skip = parseInt(skipValue) || 0;
+        const limitValue = parseInt(req.query.limit) || 5;
+        const responseData = await db.blog.findAll({ offset: skip, limit: limitValue, include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
+        const { count } = await db.blog.findAndCountAll()
+        const paginationInfo = {
+            currentPage: page,
+            limit: limit,
+            totalPage: Math.round(count / limit),
+            totalCount: count
+        }
 
-        return res.status(200).json({ Success: true, message: "Retrive All Blog", data: responseData })
+        return res.status(200).json({ Success: true, message: "Retrive All Blog", response: { data: responseData, paginationInfo: paginationInfo } })
 
     } catch (error) {
         console.log("Blog Getting Error --->", error);
