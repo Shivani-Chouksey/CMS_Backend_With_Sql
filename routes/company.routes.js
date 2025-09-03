@@ -6,10 +6,7 @@ const router = express.Router();
 
 // router.post("/create",Is_Super_Admin,upload.single('company_logo'),CreateCompany)
 // News uploads
-router.post(
-    "/create",
-    Is_Super_Admin,
-    createUpload("company", {
+router.post("/create",Is_Super_Admin, createUpload("company", {
         fileSize: 5 * 1024 * 1024, // 2MB
         allowedTypes: ["image/jpeg", "image/png", 'application/pdf'],
     }).single("company_logo"),
@@ -19,11 +16,11 @@ router.post(
 
 router.get("/list", GetCompanyList)
 router.get("/detail/:id", GetCompanyDetail)
+router.delete("/delete/:id", Is_Super_Admin, DeleteCompany)
 router.patch("/update/:id", createUpload("company", {
     fileSize: 5 * 1024 * 1024, // 2MB
     allowedTypes: ["image/jpeg", "image/png", 'application/pdf'],
 }).single("company_logo"), UpdateCompanyDetail)
-router.delete("/delete/:id",Is_Super_Admin,DeleteCompany)
 
 
 export default router 

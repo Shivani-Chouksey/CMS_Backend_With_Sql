@@ -3,6 +3,7 @@ import mysql from 'mysql2/promise';
 import { News } from "../models/news.model.js";
 import { CmsUser } from "../models/cms-user.model.js";
 import { Company } from "../models/company.model.js";
+import { Blog } from "../models/blog.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI)
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -26,11 +27,14 @@ export const DbConnection = async () => {
         db.cmsUser = CmsUser(sequelize);
         db.news = News(sequelize)
         db.company = Company(sequelize)
+        db.blog = Blog(sequelize)
 
         // Assosications - Table Relations
         // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
-        db.news.belongsTo(db.cmsUser, { foreignKey: 'created_user_id' })
-        db.company.belongsTo(db.cmsUser,{foreignKey:'created_by'})
+        db.news.belongsTo(db.cmsUser, { foreignKey: 'created_user_id' });
+        db.blog.belongsTo(db.cmsUser, { foreignKey: 'created_user_id' });
+        db.company.belongsTo(db.cmsUser, { foreignKey: 'created_by' });
+
         await sequelize.sync();
 
 

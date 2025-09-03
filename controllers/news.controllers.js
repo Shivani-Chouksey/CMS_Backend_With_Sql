@@ -65,7 +65,7 @@ export const UpdateNewsDetail = async (req, res) => {
         if (!existNews || existNews == null) {
             return res.status(404).json({ Success: false, message: "News Not Exist" })
         }
-        if (req.file && existNews.news_poster) {
+        if (req.file?.path && existNews.news_poster) {
             await RemoveFile(existNews.news_poster)
         }
         existNews.title = req.body?.title
@@ -74,7 +74,7 @@ export const UpdateNewsDetail = async (req, res) => {
         await existNews.save()
         const response = await db.news.findOne({ where: { id: req.params?.id }, include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
 
-        return res.status(200).json({ Success: true, message: "Retrive  News", data: response })
+        return res.status(200).json({ Success: true, message: "Update  News Successfully", data: response })
 
     } catch (error) {
         await RemoveFile(req.file?.path)
@@ -100,7 +100,7 @@ export const DeleteNews = async (req, res) => {
         return res.status(200).json({ Success: true, message: "News Deleted Successfully" });
 
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error",error:error });
+        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
 
     }
 }

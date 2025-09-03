@@ -70,7 +70,7 @@ export const UpdateCompanyDetail = async (req, res) => {
             await RemoveFile(req.file?.path)
             return res.status(404).json({ message: `Company Not Exist with Id  : ${id}`, Success: false })
         }
-        if (req.file && existingCompany?.logo_path) {
+        if (req.file?.path && existingCompany?.logo_path) {
             await RemoveFile(existingCompany?.logo_path)
             existingCompany.logo_path = req.file?.path
         }
