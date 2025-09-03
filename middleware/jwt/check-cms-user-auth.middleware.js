@@ -25,6 +25,7 @@ export const Is_Super_Admin = async (req, res, next) => {
             return res.status(401).json({ Success: false, message: "UnAutheried Super-Admin Access", });
         }
         req.IsAdminRole = IsVerified.role
+        req.user=IsVerified
         next()
     } catch (error) {
         return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });

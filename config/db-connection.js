@@ -28,8 +28,9 @@ export const DbConnection = async () => {
         db.company = Company(sequelize)
 
         // Assosications - Table Relations
-        db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
+        // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
         db.news.belongsTo(db.cmsUser, { foreignKey: 'created_user_id' })
+        db.company.belongsTo(db.cmsUser,{foreignKey:'created_by'})
         await sequelize.sync();
 
 

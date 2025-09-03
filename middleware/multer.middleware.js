@@ -37,7 +37,7 @@ const createStorage = (folderName) => {
       cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + (req.body?.title || "file");
+      const uniqueSuffix = Date.now() + "-" + (req.body?.title  || req.body?.name || "file");
       const ext = path.extname(file.originalname);
       cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
     },

@@ -13,6 +13,10 @@ export const Company = (sequelize) => {
         },
         logo_path: {
             type: DataTypes.STRING,
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     }
     const option = {
