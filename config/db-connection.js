@@ -17,16 +17,16 @@ const password = process.env.DB_PASSWORD
 const database = process.env.DB_NAME
 
 export const db = {}
-
+export const sequelize = new Sequelize(database, user, password, {
+    host: host, // or your remote IP
+    dialect: "mysql",
+    pool: { max: 5, min: 0, idle: 10000 },
+    logging: false
+});
 export const DbConnection = async () => {
     try {
         await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
-        const sequelize = new Sequelize(database, user, password, {
-            host: host, // or your remote IP
-            dialect: "mysql",
-            pool: { max: 5, min: 0, idle: 10000 },
-            logging: false
-        });
+
         await sequelize.authenticate();
 
         // init models and add them inside  exported db object
@@ -62,11 +62,11 @@ export const DbConnection = async () => {
         db.legalEntity.hasOne(db.companyRepresentative, { foreignKey: 'legal_entity_id' });
 
         //identityProof Relation
-        db.identityProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative_id' });
-        db.companyRepresentative.hasOne(db.identityProof, { foreignKey: 'company_represtative_id' })
+        db.companyRepresentative.hasOne(db.identityProof, { foreignKey: 'company_representative_id' })
+        db.identityProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_representative_id' });
         //address proof relation
-        db.addressProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative_id' });
-        db.companyRepresentative.hasOne(db.addressProof, { foreignKey: 'company_represtative_id' })
+        db.addressProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_representative_id' });
+        db.companyRepresentative.hasOne(db.addressProof, { foreignKey: 'company_representative_id' })
 
         // investorAndAdvisor identityproof Relation
         db.identityProof.belongsTo(db.investorAndAdvisor, { foreignKey: 'investor_advisor_id' });
@@ -75,7 +75,7 @@ export const DbConnection = async () => {
         db.addressProof.belongsTo(db.investorAndAdvisor, { foreignKey: 'investor_advisor_id' });
         db.investorAndAdvisor.hasOne(db.addressProof, { foreignKey: 'investor_advisor_id' })
 
-        await sequelize.sync({force:false});
+        await sequelize.sync({ force: false });
 
 
         console.log("Database Connected Successfully")

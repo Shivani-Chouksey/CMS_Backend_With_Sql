@@ -6,10 +6,10 @@ function AppUser(sequelize) {
             type: DataTypes.ENUM,
             values: ['investor', 'advisor', 'legal_entity']
         },
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+        // userId: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false
+        // },
         created_by_id: {
             type: DataTypes.INTEGER,
             allowNull: false,

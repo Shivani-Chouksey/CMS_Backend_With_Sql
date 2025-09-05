@@ -4,20 +4,20 @@ import fs from 'fs';
 
 // save files inside existing project directory
 const storage = multer.diskStorage(
-    {
-        destination: function (req, file, callback) {
-            const filePath = req.baseUrl.split("/api/v1/")?.[1]
-            console.log("filePath", req.baseUrl, req.baseUrl.split("/api/v1/")?.[1]);
+  {
+    destination: function (req, file, callback) {
+      const filePath = req.baseUrl.split("/api/v1/")?.[1]
+      console.log("filePath", req.baseUrl, req.baseUrl.split("/api/v1/")?.[1]);
 
-            callback(null, `./public/${filePath}`)
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + req.body?.title
-            // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-            console.log("File Details ---> Multer Middleware -->", file);
-            cb(null, file.fieldname + '-' + uniqueSuffix)
-        }
+      callback(null, `./public/${filePath}`)
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + req.body?.title
+      // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      console.log("File Details ---> Multer Middleware -->", file);
+      cb(null, file.fieldname + '-' + uniqueSuffix)
     }
+  }
 )
 
 
@@ -27,7 +27,17 @@ export const upload = multer({ storage: storage });
 const createStorage = (folderName) => {
   return multer.diskStorage({
     destination: (req, file, cb) => {
-      const uploadPath = path.join("public", folderName);
+      let uploadPath
+      if (folderName === "app-user") {
+        const uniqueForeveryUser = req.body?.user ? req.body?.user.email : req.body?.company_detail?.company_Id_number
+        console.log("uniqueForeveryUser",uniqueForeveryUser);
+        
+        uploadPath = `${path.join("public", folderName)}/${req.body?.role}/${uniqueForeveryUser}`;
+
+      } else {
+        uploadPath = path.join("public", folderName);
+
+      }
 
       // Ensure folder exists
       if (!fs.existsSync(uploadPath)) {
@@ -37,7 +47,7 @@ const createStorage = (folderName) => {
       cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + (req.body?.title  || req.body?.name || "file");
+      const uniqueSuffix = Date.now() + "-" + (req.body?.title || req.body?.name || "file");
       const ext = path.extname(file.originalname);
       cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
     },

@@ -6,7 +6,7 @@ export const AddressProof =  (sequelize) => {
             type: DataTypes.DATE
         },
         card_number: {
-            type: DataTypes.DATE
+            type: DataTypes.INTEGER
 
         },
         card_image: {
@@ -26,13 +26,13 @@ export const AddressProof =  (sequelize) => {
                 key: 'id',
             },
         },
-        // legal_entity_id: {
-        //     type: DataTypes.INTEGER,
-        //     references: {
-        //         model: 'legal_entity',
-        //         key: 'id',
-        //     },
-        // },
+        legal_entity_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'legal_entities',
+                key: 'id',
+            },
+        },
         company_representative_id: {
             type: DataTypes.INTEGER,
             rererences: {
