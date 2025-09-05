@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize"
 
-export const legal_entity = async (sequelize) => {
+export const legal_entity =  (sequelize) => {
     const attributes = {
         company_name: {
             type: DataTypes.STRING,
@@ -13,7 +13,7 @@ export const legal_entity = async (sequelize) => {
             allowNull: false
         },
         company_Id_number: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             required: true,
             alllowNull: false
         },
@@ -28,7 +28,7 @@ export const legal_entity = async (sequelize) => {
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_user',
+                model: 'app_users',
                 key: 'id',
             },
         }
@@ -86,5 +86,5 @@ export const legal_entity = async (sequelize) => {
     const options = {
         timestamp: true
     }
-    return await sequelize.define("legal_entity", attributes, options)
+    return  sequelize.define("legal_entity", attributes, options)
 }

@@ -1,4 +1,6 @@
-export const CompanyRepresentative = async (sequelize) => {
+import { DataTypes } from "sequelize"
+
+export const CompanyRepresentative =  (sequelize) => {
     const attributes = {
         name: {
             type: DataTypes.STRING,
@@ -11,14 +13,14 @@ export const CompanyRepresentative = async (sequelize) => {
             required: true
         },
         mobile_number: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             alllowNull: false,
             required: true
         },
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_user',
+                model: 'app_users',
                 key: 'id',
             },
         },
@@ -32,7 +34,7 @@ export const CompanyRepresentative = async (sequelize) => {
         legal_entity_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'legal_entity',
+                model: 'legal_entities',
                 key: 'id',
             },
         }
@@ -40,5 +42,5 @@ export const CompanyRepresentative = async (sequelize) => {
     const option = {
         timestamp: true
     }
-    return await sequelize.define('company_represtative', attributes, option)
+    return  sequelize.define('company_represtative', attributes, option)
 }

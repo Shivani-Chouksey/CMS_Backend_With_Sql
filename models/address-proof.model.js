@@ -1,4 +1,6 @@
-export const AddressProof = async (sequelize) => {
+import { DataTypes } from "sequelize"
+
+export const AddressProof =  (sequelize) => {
     const attributes = {
         card_issuance_date: {
             type: DataTypes.DATE
@@ -13,14 +15,14 @@ export const AddressProof = async (sequelize) => {
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_user',
+                model: 'app_users',
                 key: 'id',
             },
         },
         investor_advisor_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'investor_advisor',
+                model: 'investor_advisors',
                 key: 'id',
             },
         },
@@ -34,7 +36,7 @@ export const AddressProof = async (sequelize) => {
         company_representative_id: {
             type: DataTypes.INTEGER,
             rererences: {
-                model: 'company_represtative',
+                model: 'company_represtatives',
                 key: "id"
             }
         }
@@ -43,5 +45,5 @@ export const AddressProof = async (sequelize) => {
     const option = {
         timestamp: true
     }
-    return await sequelize.define('address_proof', attributes, option)
+    return  sequelize.define('address_proof', attributes, option)
 }

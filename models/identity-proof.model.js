@@ -1,13 +1,15 @@
-export const IdentityProof = async (sequelize) => {
+import { DataTypes } from "sequelize"
+
+function IdentityProof(sequelize) {
     const attributes = {
         id_type: {
-            types: DataTypes.ENUM,
+            type: DataTypes.ENUM,
             values: ['pan_card', 'id_card'],
             required: true,
             allowNull: false
         },
         id_number: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             required: true,
             allowNull: false
         },
@@ -19,28 +21,28 @@ export const IdentityProof = async (sequelize) => {
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_user',
+                model: 'app_users',
                 key: 'id',
             },
         },
         investor_advisor_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'investor_advisor',
+                model: 'investor_advisors',
                 key: 'id',
             },
         },
         legal_entity_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'legal_entity',
+                model: 'legal_entities',
                 key: 'id',
             },
         },
         company_representative_id: {
             type: DataTypes.INTEGER,
             rererences: {
-                model: 'company_represtative',
+                model: 'company_represtatives',
                 key: "id"
             }
         }
@@ -49,5 +51,7 @@ export const IdentityProof = async (sequelize) => {
     const option = {
         timestamp: true
     }
-    return await sequelize.define('identity_proof', attributes, option)
+    return sequelize.define('identity_proof', attributes, option)
 }
+
+export { IdentityProof }

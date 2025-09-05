@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize"
 
-export const Investor_Advisor_User = async (sequelize) => {
+export const Investor_Advisor_User =  (sequelize) => {
     const attributes = {
         name: {
             type: DataTypes.STRING,
@@ -11,7 +11,7 @@ export const Investor_Advisor_User = async (sequelize) => {
             required: true
         },
         mobile_number: {
-            type: DataTypes.NUMBER
+            type: DataTypes.INTEGER
         },
         address: {
             type: DataTypes.STRING
@@ -27,7 +27,7 @@ export const Investor_Advisor_User = async (sequelize) => {
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_user',
+                model: 'app_users',
                 key: 'id',
             },
         }
@@ -36,5 +36,5 @@ export const Investor_Advisor_User = async (sequelize) => {
     const options = {
         timestamp: true
     }
-    return await sequelize.define('investor_advisor', attributes, options)
+    return  sequelize.define('investor_advisor', attributes, options)
 }

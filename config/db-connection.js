@@ -62,11 +62,11 @@ export const DbConnection = async () => {
         db.legalEntity.hasOne(db.companyRepresentative, { foreignKey: 'legal_entity_id' });
 
         //identityProof Relation
-        db.identityProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative' });
-        db.companyRepresentative.hasOne(db.identityProof, { foreignKey: 'company_represtative' })
+        db.identityProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative_id' });
+        db.companyRepresentative.hasOne(db.identityProof, { foreignKey: 'company_represtative_id' })
         //address proof relation
-        db.addressProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative' });
-        db.companyRepresentative.hasOne(db.addressProof, { foreignKey: 'company_represtative' })
+        db.addressProof.belongsTo(db.companyRepresentative, { foreignKey: 'company_represtative_id' });
+        db.companyRepresentative.hasOne(db.addressProof, { foreignKey: 'company_represtative_id' })
 
         // investorAndAdvisor identityproof Relation
         db.identityProof.belongsTo(db.investorAndAdvisor, { foreignKey: 'investor_advisor_id' });
@@ -75,7 +75,7 @@ export const DbConnection = async () => {
         db.addressProof.belongsTo(db.investorAndAdvisor, { foreignKey: 'investor_advisor_id' });
         db.investorAndAdvisor.hasOne(db.addressProof, { foreignKey: 'investor_advisor_id' })
 
-        await sequelize.sync();
+        await sequelize.sync({force:false});
 
 
         console.log("Database Connected Successfully")

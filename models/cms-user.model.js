@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt';
 
 
 function CmsUser(sequelize) {
-    return sequelize.define('cms_user', {
+    return sequelize.define('cms_user', 
+        {
         username: {
             type: DataTypes.STRING,
             allowNull: false,

@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize"
 
-export const AppUser = async (sequelize) => {
+function AppUser(sequelize) {
     const attributes = {
         role: {
             type: DataTypes.ENUM,
@@ -22,5 +22,7 @@ export const AppUser = async (sequelize) => {
     const options = {
         timestamp: true
     }
-    return await sequelize.define('app_user', attributes, options)
+    return sequelize.define('app_user', attributes, options)
 }
+
+export { AppUser }
