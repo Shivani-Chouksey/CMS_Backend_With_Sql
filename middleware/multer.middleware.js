@@ -29,9 +29,9 @@ const createStorage = (folderName) => {
     destination: (req, file, cb) => {
       let uploadPath
       if (folderName === "app-user") {
-        const uniqueForeveryUser = req.body?.user ? req.body?.user.email : req.body?.company_detail?.company_Id_number
-        console.log("uniqueForeveryUser",uniqueForeveryUser);
-        
+        const uniqueForeveryUser = req.body?.email;
+        console.log("uniqueForeveryUser", uniqueForeveryUser);
+
         uploadPath = `${path.join("public", folderName)}/${req.body?.role}/${uniqueForeveryUser}`;
 
       } else {

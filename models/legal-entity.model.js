@@ -1,11 +1,16 @@
 import { DataTypes } from "sequelize"
 
-export const legal_entity =  (sequelize) => {
+export const legal_entity = (sequelize) => {
     const attributes = {
         company_name: {
             type: DataTypes.STRING,
             alllowNull: false,
             required: true
+        },
+        email: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
         },
         company_incorporation_date: {
             type: DataTypes.DATE,
@@ -86,5 +91,5 @@ export const legal_entity =  (sequelize) => {
     const options = {
         timestamp: true
     }
-    return  sequelize.define("legal_entity", attributes, options)
+    return sequelize.define("legal_entity", attributes, options)
 }
