@@ -10,6 +10,7 @@ import { Investor_Advisor_User } from "../models/investor-advisor.model.js";
 import { CompanyRepresentative } from "../models/company-representative.model.js";
 import { AddressProof } from "../models/address-proof.model.js";
 import { IdentityProof } from "../models/identity-proof.model.js";
+import { Report } from "../models/report.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI)
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -39,7 +40,8 @@ export const DbConnection = async () => {
         db.investorAndAdvisor = Investor_Advisor_User(sequelize);
         db.companyRepresentative = CompanyRepresentative(sequelize);
         db.addressProof = AddressProof(sequelize);
-        db.identityProof = IdentityProof(sequelize)
+        db.identityProof = IdentityProof(sequelize);
+        db.report = Report(sequelize);
 
         // Assosications - Table Relations
         // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
@@ -73,8 +75,13 @@ export const DbConnection = async () => {
         db.investorAndAdvisor.hasOne(db.identityProof, { foreignKey: 'investor_advisor_id' })
 
         db.addressProof.belongsTo(db.investorAndAdvisor, { foreignKey: 'investor_advisor_id' });
-        db.investorAndAdvisor.hasOne(db.addressProof, { foreignKey: 'investor_advisor_id' })
+        db.investorAndAdvisor.hasOne(db.addressProof, { foreignKey: 'investor_advisor_id' });
 
+        //report company relation
+        db.report.belongsToMany(db.company, { through: 'compniesId', as: 'companies' });
+        db.company.belongsToMany(db.report, { through: 'compniesId', as: 'reports' });
+        db.cmsUser.hasMany(db.report, { foreignKey: 'createdBy' });
+        db.report.belongsTo(db.cmsUser, { foreignKey: 'createdBy' ,as :"createdByUser" })
         await sequelize.sync({ force: false });
 
 
