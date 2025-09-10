@@ -22,15 +22,15 @@ function Report(sequelize) {
         access_group: {
             type: DataTypes.ENUM,
             values: ['intermediate', 'advanced'],
-            default: 'intermediate'
+            // default: 'intermediate'
         },
         file: {
             type: DataTypes.STRING,
-            allowNull: false
+            // allowNull: false
         },
-        createdBy:{
-            type:DataTypes.INTEGER,
-            allowNull:false
+        createdBy: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
     }
     const options = {

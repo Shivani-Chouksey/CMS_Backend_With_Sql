@@ -4,20 +4,20 @@ import { RemoveFile } from "../utils/helpers.js";
 
 export const CreateReport = async (req, res) => {
     try {
-        console.log(req.body, req.file);
-
         const isReportExist = await db.report.findOne({ where: { name: req.body.name } })
         if (isReportExist) {
-            RemoveFile(req.file?.path)
+            if (req.file || req.file != undefined) {
+                RemoveFile(req.file?.path)
+            }
             return res.status(400).json({ Success: false, message: "Report already exist with this name" })
         }
-
-        const newReport = await db.report.create({ ...req.body, file: req.file?.path, createdBy: req.user?.id })
+        const newReport = await db.report.create({ ...req.body, file: req.file?.path, createdBy: req.user?.id, role: JSON.stringify(req?.body.role) })
         return res.status(201).json({ Success: true, message: "Report Created Successfully", data: newReport })
     } catch (error) {
-        RemoveFile(req.file?.path)
+        if (req.file || req.file != undefined) {
+            RemoveFile(req.file?.path)
+        }
         console.log(error);
-
         return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
 
     }
@@ -34,7 +34,7 @@ export const GetReportList = async (req, res) => {
                     [Op.like]: `%${req.user.role}%`
                 }
             },
-            attributes: { exclude: ['role', 'access_group', 'createdBy'] },
+            attributes: { exclude: ['access_group', 'createdBy'] },
             include: { model: db.cmsUser, as: "createdByUser", attributes: ['id', "username", 'role'] },
         });
         return res.status(200).json({ Success: true, message: "Report List", data: reportList })
@@ -48,7 +48,9 @@ export const GetReportDetail = async (req, res) => {
     try {
         const responseData = await db.report.findOne({
             where: {
-                id: req.params.id, role: {
+
+                id: req.params.id,
+                role: {
                     [Op.like]: `%${req.user.role}%`
                 }
             },
@@ -63,7 +65,7 @@ export const GetReportDetail = async (req, res) => {
             responseData.compniesId = JSON.parse(responseData?.compniesId)
         }
         const companyRes = await db.company.findAll({ where: { id: { [Op.in]: responseData?.compniesId } }, attributes: { exclude: ['created_by'] } })
-        console.log("companyRes", companyRes);
+        // console.log("companyRes", companyRes);
         return res.status(200).json({ Success: true, message: "Report Detail", data: { ...responseData.toJSON(), companies: companyRes } })
     } catch (error) {
         console.log(error);
@@ -101,7 +103,7 @@ export const UpdateReportDetail = async (req, res) => {
             isReportExist.save()
         }
 
-        const updatedReport = await db.report.update({ ...req.body }, { where: { id: req.params.id } });
+        const updatedReport = await db.report.update({ ...req.body, role: JSON.stringify(req?.body.role) }, { where: { id: req.params.id } });
         return res.status(200).json({ Success: true, message: "Report Updated Successfully", data: updatedReport })
     } catch (error) {
         console.log(error);

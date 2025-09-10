@@ -48,11 +48,11 @@ export const Is_Logged_In = async (req, res, next) => {
 
         }
 
-        const { dataValues } = await db.cmsUser.findOne({ where: { id: IsVerified?.id } });
+        const { dataValues } = await db.appUser.findOne({ where: { id: IsVerified?.id } });
         console.log("FoundUser", dataValues);
 
 
-        if (!dataValues) {
+        if (!dataValues || dataValues === undefined) {
             return res.status(401).json({ Success: false, message: "UnAutheried  Access", });
         }
         req.user = IsVerified
