@@ -11,6 +11,7 @@ import { CompanyRepresentative } from "../models/company-representative.model.js
 import { AddressProof } from "../models/address-proof.model.js";
 import { IdentityProof } from "../models/identity-proof.model.js";
 import { Report } from "../models/report.model.js";
+import { HighLight } from "../models/highlight.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI)
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -42,6 +43,7 @@ export const DbConnection = async () => {
         db.addressProof = AddressProof(sequelize);
         db.identityProof = IdentityProof(sequelize);
         db.report = Report(sequelize);
+        db.highlight = HighLight(sequelize)
 
         // Assosications - Table Relations
         // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
@@ -81,7 +83,12 @@ export const DbConnection = async () => {
         db.report.belongsToMany(db.company, { through: 'compniesId', as: 'companies' });
         db.company.belongsToMany(db.report, { through: 'compniesId', as: 'reports' });
         db.cmsUser.hasMany(db.report, { foreignKey: 'createdBy' });
-        db.report.belongsTo(db.cmsUser, { foreignKey: 'createdBy' ,as :"createdByUser" })
+        db.report.belongsTo(db.cmsUser, { foreignKey: 'createdBy', as: "createdByUser" })
+
+        //highlight relation with highlight
+        db.highlight.belongsTo(db.cmsUser, { foreignKey: 'createdBy' , as: "createdByUser"});
+
+
         await sequelize.sync({ force: false });
 
 

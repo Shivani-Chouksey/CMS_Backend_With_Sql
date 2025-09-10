@@ -5,7 +5,7 @@ import COMPANY_Routes from './company.routes.js';
 import BLOG_Routes from './blog.routes.js'
 import App_User_Routes from './app-user.routes.js'
 import Report_Routes from './report.routes.js';
-
+import HIGHLIGHT_ROUTES from './highlight.routes.js'
 const router = express.Router();
 
 
@@ -15,6 +15,6 @@ router.use('/news', NEWS_Routes)
 router.use("/company", COMPANY_Routes);
 router.use("/blog", BLOG_Routes);
 router.use("/app-user", App_User_Routes)
-router.use("/report",Report_Routes)
-
+router.use("/report", Report_Routes)
+router.use('/highlight', HIGHLIGHT_ROUTES)
 export default router;
