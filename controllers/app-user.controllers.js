@@ -2,6 +2,7 @@ import { db, sequelize } from "../config/db-connection.js";
 import { generateFourDigitOTP } from "../utils/generateOtp.js";
 import { Send_Mail } from "../utils/sendEmail.js";
 import jwt from 'jsonwebtoken'
+
 export const CreateAppUser = async (req, res) => {
     const transaction = await sequelize.transaction();
 
@@ -199,5 +200,64 @@ export const GetCurrentUser = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
 
+    }
+}
+
+
+export const UpdateAppUser = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    console.log("UpdateAppUser req.body", req.body);
+    const userId = req.params.id
+    try {
+        //  check if user exist
+        const isUserExist = await db.appUser.findOne({
+            where: { id: req.params.id }, include: [
+                { model: db.cmsUser, attributes: ['id', 'role', 'userName'] },
+                { model: db.legalEntity, include: [{ model: db.companyRepresentative, include: [{ model: db.identityProof }, { model: db.addressProof }] }] },
+                { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
+            ]
+        });
+        if (!isUserExist || isUserExist === null || isUserExist === undefined) {
+            return res.status(404).json({ Success: false, message: `User Not Exist With this ID : ${req.params.id}` })
+        }
+
+
+        await db.appUser.update({ is_active: req.body?.is_active, email: req.body?.email }, { where: { id: userId }, transaction });
+
+        if (isUserExist.role === 'investor' || isUserExist.role === 'advisor') {
+            const { user } = req.body
+            if (user) {
+                await db.investorAndAdvisor.update({ ...user, profile_image: req.files?.profile_image && req.files?.profile_image[0]?.path }, { where: { app_user_id: userId }, transaction })
+            }
+            if (user.identity_proof) {
+                await db.identityProof.update({ ...user.identity_proof, id_image: req.files?.identity_proof && req.files?.identity_proof[0]?.path }, { where: { app_user_id: userId }, transaction })
+            }
+            if (user.address_proof) {
+                await db.addressProof.update({ ...user.address_proof, card_image: req.files?.address_proof && req.files?.address_proof[0]?.path }, { where: { app_user_id: userId }, transaction })
+            }
+        }
+        if (isUserExist.role === 'legal_entity') {
+            const { company_detail } = req.body
+            if (company_detail) {
+                await db.legalEntity.update({
+                    ...company_detail, profile_image: req.files?.profile_image && req.files?.profile_image[0]?.path
+                }, { where: { app_user_id: userId }, transaction })
+            }
+            if (company_detail.company_Representative) {
+                await db.companyRepresentative.update({ ...company_detail.company_Representative }, { where: { app_user_id: userId }, transaction })
+            }
+            if (company_detail.company_Representative.address_proof) {
+                await db.addressProof.update({ ...company_detail.company_Representative.address_proof, card_image: req.files?.address_proof && req.files?.address_proof[0]?.path }, { where: { app_user_id: userId }, transaction })
+            }
+            if (company_detail.company_Representative.identity_proof) {
+                await db.identityProof.update({ ...company_detail.company_Representative.identity_proof, id_image: req.files?.identity_proof && req.files?.identity_proof[0]?.path }, { where: { app_user_id: userId }, transaction })
+            }
+        }
+        await transaction.commit();
+        return res.status(200).json({ message: `App User Update successfully (role :${isUserExist.role})`, Success: true })
+
+    } catch (error) {
+        console.log('UpdateAppUser', error);
+        return res.status(500).json({ Success: false, message: `Internal Server Error `, error: error.message })
     }
 }
