@@ -1,0 +1,1812 @@
+{
+	"info": {
+		"_postman_id": "6247886f-57a3-4164-936d-31621cafc556",
+		"name": "CMS_SQL_TASK",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41467100",
+		"_collection_link": "https://test44-8795.postman.co/workspace/shivani~c66f8b61-9467-4913-b51b-c4da08d88219/collection/41467100-6247886f-57a3-4164-936d-31621cafc556?action=share&source=collection_link&creator=41467100"
+	},
+	"item": [
+		{
+			"name": "cms-user",
+			"item": [
+				{
+					"name": "/create-cms-super-admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"superAdmin\",\r\n    \"email\":\"superAdmin@gmail.com\",\r\n    \"password\":\"chouksey\",\r\n    \"role\":\"super-admin\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/create-cms-super-admin",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"create-cms-super-admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-cms-admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcxMjY0LCJleHAiOjE3NTc3Nzg0NjR9.imcg_M1bDmQTzprC7_abvauUoIlEGraekpgyyp2DlcQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"shivani-cwhouksey-\",\r\n    \"email\":\"shivanichouksewy1702311@gmail.com\",\r\n    \"password\":\"chouksey\",\r\n    \"role\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/create-cms-admin",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"create-cms-admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcxMjY0LCJleHAiOjE3NTc3Nzg0NjR9.imcg_M1bDmQTzprC7_abvauUoIlEGraekpgyyp2DlcQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"role\":\"admin\",\r\n    \"isActive\":false\r\n   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/update/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"update",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \r\n    \"email\":\"superAdmin@gmail.com\",\r\n    \"password\":\"chouksey\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-cms-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcxMjY0LCJleHAiOjE3NTc3Nzg0NjR9.imcg_M1bDmQTzprC7_abvauUoIlEGraekpgyyp2DlcQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/all-cms-user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"all-cms-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "current-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcxMjY0LCJleHAiOjE3NTc3Nzg0NjR9.imcg_M1bDmQTzprC7_abvauUoIlEGraekpgyyp2DlcQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/current-user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"current-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcxMjY0LCJleHAiOjE3NTc3Nzg0NjR9.imcg_M1bDmQTzprC7_abvauUoIlEGraekpgyyp2DlcQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/drop/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"drop",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop-table",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/cms-user/drop-table",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cms-user",
+								"drop-table"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "news",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODA1NTA5LCJleHAiOjE3NTY4MTI3MDl9.JOnJbrY3K3GGfA_Wq_O6dhYQH2Ij9sPNknMzA4XXaNc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Deploy5",
+									"type": "text"
+								},
+								{
+									"key": "news_poster",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (1).png"
+								},
+								{
+									"key": "content",
+									"value": "<p>In est ante in nibh mauris cursus mattis molestie a. Semper eget duis at tellus at urna condimentum. Erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit. Purus faucibus ornare suspendisse sed nisi lacus. Augue interdum velit euismod in. Arcu non odio euismod lacinia at quis risus sed vulputate. Accumsan tortor posuere ac ut consequat semper viverra. Donec et odio pellentesque diam. Risus quis varius quam quisque id diam. Lobortis feugiat vivamus at augue eget arcu dictum varius duis.</p>\n<p>Cras pulvinar mattis nunc sed blandit. Diam quis enim lobortis scelerisque fermentum dui. Bibendum at varius vel pharetra. Malesuada proin libero nunc consequat interdum varius sit amet. Lectus mauris ultrices eros in cursus turpis massa tincidunt.</p>",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/news/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"news",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2NzEyMjgyLCJleHAiOjE3NTY3MTk0ODJ9.LAs5HL7oaFJE6GlWyJIRqNBIh8u-l8LH1O7luFF4DyQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/news/all",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"news",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2NzEyMjgyLCJleHAiOjE3NTY3MTk0ODJ9.LAs5HL7oaFJE6GlWyJIRqNBIh8u-l8LH1O7luFF4DyQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/news/detail/testinggggg",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"news",
+								"detail",
+								"testinggggg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODAwOTE1LCJleHAiOjE3NTY4MDgxMTV9.-bqGf6W3AWudVD5tTDuQtMew_cCUYv1CbVnFwNZ-dtQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Cyber Security",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/news/update/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"news",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete news",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODA1NTA5LCJleHAiOjE3NTY4MTI3MDl9.JOnJbrY3K3GGfA_Wq_O6dhYQH2Ij9sPNknMzA4XXaNc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/news/delete/11",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"news",
+								"delete",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2OTA1MzAxLCJleHAiOjE3NTY5MTI1MDF9._KuWG00C-_o2p0vjgJKvy0L47bcssMMwbP5y8UubmzE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Blog5",
+									"type": "text"
+								},
+								{
+									"key": "blog_poster",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-06-16 105930.png"
+								},
+								{
+									"key": "content",
+									"value": "<p>In est ante in nibh mauris cursus mattis molestie a. Semper eget duis at tellus at urna condimentum. Erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit. Purus faucibus ornare suspendisse sed nisi lacus. Augue interdum velit euismod in. Arcu non odio euismod lacinia at quis risus sed vulputate. Accumsan tortor posuere ac ut consequat semper viverra. Donec et odio pellentesque diam. Risus quis varius quam quisque id diam. Lobortis feugiat vivamus at augue eget arcu dictum varius duis.</p>\n<p>Cras pulvinar mattis nunc sed blandit. Diam quis enim lobortis scelerisque fermentum dui. Bibendum at varius vel pharetra. Malesuada proin libero nunc consequat interdum varius sit amet. Lectus mauris ultrices eros in cursus turpis massa tincidunt.</p>",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/blog/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"blog",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2NzEyMjgyLCJleHAiOjE3NTY3MTk0ODJ9.LAs5HL7oaFJE6GlWyJIRqNBIh8u-l8LH1O7luFF4DyQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/blog/all?page=1&limit=2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"blog",
+								"all"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2NzEyMjgyLCJleHAiOjE3NTY3MTk0ODJ9.LAs5HL7oaFJE6GlWyJIRqNBIh8u-l8LH1O7luFF4DyQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/blog/detail/Blog1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"blog",
+								"detail",
+								"Blog1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODk3NzYzLCJleHAiOjE3NTY5MDQ5NjN9.gDtELFUG4i2OqeOdOHuqMFnNhCMOghKqSDnHT6GMo5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Development",
+									"type": "text"
+								},
+								{
+									"key": "blog_poster",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-06-16 105930.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/blog/update/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"blog",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete news",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODk3NzYzLCJleHAiOjE3NTY5MDQ5NjN9.gDtELFUG4i2OqeOdOHuqMFnNhCMOghKqSDnHT6GMo5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/blog/delete/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"blog",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NzcyMjI0LCJleHAiOjE3NTc3Nzk0MjR9.wJa72gtoWcdA7pUeNr0g0mNuBDlBjuOX3e7YtxVqf8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Company new 2",
+									"type": "text"
+								},
+								{
+									"key": "company_logo",
+									"contentType": "",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-05-30 162247.png"
+								},
+								{
+									"key": "content",
+									"value": "<p>In est ante in nibh mauris cursus mattis molestie a. Semper eget duis at tellus at urna condimentum. Erat pellentesque adipiscing commodo elit at imperdiet dui accumsan sit. Purus faucibus ornare suspendisse sed nisi lacus. Augue interdum velit euismod in. Arcu non odio euismod lacinia at quis risus sed vulputate. Accumsan tortor posuere ac ut consequat semper viverra. Donec et odio pellentesque diam. Risus quis varius quam quisque id diam. Lobortis feugiat vivamus at augue eget arcu dictum varius duis.</p>\n<p>Cras pulvinar mattis nunc sed blandit. Diam quis enim lobortis scelerisque fermentum dui. Bibendum at varius vel pharetra. Malesuada proin libero nunc consequat interdum varius sit amet. Lectus mauris ultrices eros in cursus turpis massa tincidunt.</p>",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/company/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"company",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/company/list",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"company",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/company/detail/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"company",
+								"detail",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "company_logo",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-06-16 105930.png"
+								},
+								{
+									"key": "content",
+									"value": "company ",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/company/update/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"company",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU2ODkzNzM0LCJleHAiOjE3NTY5MDA5MzR9.iwaVu23xDT1SZp22KIU9s3jCZCHS3W4L_C1HWpCnc8Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/company/delete/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"company",
+								"delete",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "app-user",
+			"item": [
+				{
+					"name": "create for role investor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NDg5ODY3LCJleHAiOjE3NTc0OTcwNjd9.oTpdJEAgFHZR8GwKdegJI0jtEi542VKSPTFzRMjWWb8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "role",
+									"value": "investor",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (2).png",
+									"disabled": true
+								},
+								{
+									"key": "user[name]",
+									"value": "shivani",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "shivanichouksey1702@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "user[mobile_number]",
+									"value": "123456789",
+									"type": "text"
+								},
+								{
+									"key": "user[address]",
+									"value": "fsdfsfsfsfs",
+									"type": "text"
+								},
+								{
+									"key": "user[profile_image]",
+									"value": "fdsfsfsfsdfsfsf fdsfsdf",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "access_group",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[identity_proof][id_type]",
+									"value": "pan_card",
+									"type": "text"
+								},
+								{
+									"key": "user[identity_proof][id_number]",
+									"value": "432423",
+									"type": "text"
+								},
+								{
+									"key": "user[identity_proof][id_image]",
+									"value": "fdsfsdfsfsfsdfsdfsfsdf",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[address_proof][card_issuance_date]",
+									"value": "2025-09-05",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_number]",
+									"value": "34567",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_image]",
+									"value": "sdfghfdsadfgh",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "identity_proof",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (6).png"
+								},
+								{
+									"key": "address_proof",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-05-21 132620.png"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-06-20 171350.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NTcwMzc2LCJleHAiOjE3NTc1Nzc1NzZ9.Zhc-UvjMC84u-ZLqMtzXBB0lQk2RE49rfoZuf_manqM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user[name]",
+									"value": "shivani updated",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "is_active",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "user[mobile_number]",
+									"value": "324567",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[address]",
+									"value": "fsdfsfsfsfs",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[profile_image]",
+									"value": "fdsfsfsfsdfsfsf fdsfsdf",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "access_group",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[identity_proof][id_type]",
+									"value": "pan_card",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[identity_proof][id_number]",
+									"value": "432423",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[identity_proof][id_image]",
+									"value": "fdsfsdfsfsfsdfsdfsfsdf",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[address_proof][card_issuance_date]",
+									"value": "2025-09-05",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[address_proof][card_number]",
+									"value": "123456789",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_image]",
+									"value": "sdfghfdsadfgh",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/update/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create for role investor Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3MDU3MDc4LCJleHAiOjE3NTcwNjQyNzh9.6JCP7HzawMeX85kYXl1_Ho0fWgOmdQRipUa7vIW1Q0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "role",
+									"value": "investor",
+									"type": "text"
+								},
+								{
+									"key": "id_proof",
+									"type": "file",
+									"src": [
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (1).png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (2).png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (3).png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (4).png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-05-21 132620.png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-05-30 162247.png",
+										"/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-06-16 105930.png"
+									]
+								},
+								{
+									"key": "user[name]",
+									"value": "shivani",
+									"type": "text"
+								},
+								{
+									"key": "user[email]",
+									"value": "Shivani@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "user[mobile_number]",
+									"value": "324567",
+									"type": "text"
+								},
+								{
+									"key": "user[address]",
+									"value": "fsdfsfsfsfs",
+									"type": "text"
+								},
+								{
+									"key": "user[profile_image]",
+									"value": "fdsfsfsfsdfsfsf fdsfsdf",
+									"type": "text"
+								},
+								{
+									"key": "access_group",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user[identity_proof][id_type]",
+									"value": "pan_card",
+									"type": "text"
+								},
+								{
+									"key": "user[identity_proof][id_number]",
+									"value": "432423",
+									"type": "text"
+								},
+								{
+									"key": "user[identity_proof][id_image]",
+									"value": "fdsfsdfsfsfsdfsdfsfsdf",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_issuance_date]",
+									"value": "2025-09-05",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_number]",
+									"value": "34567",
+									"type": "text"
+								},
+								{
+									"key": "user[address_proof][card_image]",
+									"value": "sdfghfdsadfgh",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create for role legal-Entity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3MTc0NDg4LCJleHAiOjE3NTcxODE2ODh9.ExEk9HPEa957xZ8E_t0I39ZsAUZBP0bdfCPpm5peNfI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"legal_entity\",\r\n    \"email\": \"test@gmail.com\",\r\n    \"company_detail\": {\r\n        \"company_name\": \"Tesla\",\r\n        \"company_incorporation_date\": \"2025-09-05\",\r\n        \"company_Id_number\": 1212312,\r\n        \"address\": \"ghatkoper\",\r\n        \"company_Representative\": {\r\n            \"name\": \"chouksey\",\r\n            \"mobile_number\": 23456734,\r\n            \"identity_proof\": {\r\n                \"id_type\": \"pan_card\",\r\n                \"id_number\": 2345\r\n                \r\n            },\r\n            \"address_proof\": {\r\n                \"card_issuance_date\": \"2025-09-05\",\r\n                \"card_number\": 23456\r\n               \r\n            }\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3MDU3MDc4LCJleHAiOjE3NTcwNjQyNzh9.6JCP7HzawMeX85kYXl1_Ho0fWgOmdQRipUa7vIW1Q0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/all",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3MDU3MDc4LCJleHAiOjE3NTcwNjQyNzh9.6JCP7HzawMeX85kYXl1_Ho0fWgOmdQRipUa7vIW1Q0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/detail/11",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"detail",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "current-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImludmVzdG9yIiwiaWF0IjoxNzU3MzMwMTQwLCJleHAiOjE3NTczMzczNDB9.0QNckakY3gBz-uLwglhjE-Q_fW3OtLznewcsnisxKVo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/current-user",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"current-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login/otp",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"shivanichouksey1702@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/login/otp",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"login",
+								"otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"shivanichouksey1702@gmail.com\",\r\n    \"otp\":5187  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/app-user/verify-otp",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"app-user",
+								"verify-otp"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "report",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Company",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "08-09-2025",
+									"type": "text"
+								},
+								{
+									"key": "compniesId",
+									"value": "[1,2]",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "investor",
+									"type": "text"
+								},
+								{
+									"key": "access_group",
+									"value": "intermediate",
+									"type": "text"
+								},
+								{
+									"key": "report_file",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (1).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/report/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3Mzk2MjI0LCJleHAiOjE3NTc0MDM0MjR9.yEjJk7GNtp2jIRk0o1v1A5B4f6QpY3W-JPeUYjWhZ74",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Report Update title",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "08-09-2025",
+									"type": "text"
+								},
+								{
+									"key": "compniesId",
+									"value": "[1,2]",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "investor",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "access_group",
+									"value": "intermediate",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "report_file",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot (1).png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/report/update/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"update",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImludmVzdG9yIiwiaWF0IjoxNzU3NDIxNzIyLCJleHAiOjE3NTc0Mjg5MjJ9.NO6XYTJxq7XiZ5KZ-RIZV4gu75iPp7qTszuKJ18f9IU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/report/list",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImludmVzdG9yIiwiaWF0IjoxNzU3NDgzNTY3LCJleHAiOjE3NTc0OTA3Njd9.vlLycFE6GKzAwKFOqJ8EZ0wTltpjgCL49XGkTNghD3g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/report/detail/4",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"detail",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3MzU0NTcwLCJleHAiOjE3NTczNjE3NzB9.3jT5MRS7G_F27mBRYbyfIqz2HuVcqytUdjczEd1Jwkw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/report/delete/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3Mzk2MjI0LCJleHAiOjE3NTc0MDM0MjR9.yEjJk7GNtp2jIRk0o1v1A5B4f6QpY3W-JPeUYjWhZ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Report Update title4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "08-09-2025",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "compniesId",
+									"value": "[3]",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "role",
+									"value": "investor",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "access_group",
+									"value": "advanced",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "report_file",
+									"type": "file",
+									"src": "/C:/Users/vendor.developer1/OneDrive - Cogencis Information Services Ltd/Pictures/Screenshots/Screenshot 2025-09-05 151107.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/report/update/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"report",
+								"update",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "highlight",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NDg1NTk2LCJleHAiOjE3NTc0OTI3OTZ9.BHi2wP8RbikFZGUFJettCqcUSWJnxc8CO_lRF_ZaLsU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"highlight 1\",\r\n    \"description\":\"description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/highlight/create",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"highlight",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NDg1NTk2LCJleHAiOjE3NTc0OTI3OTZ9.BHi2wP8RbikFZGUFJettCqcUSWJnxc8CO_lRF_ZaLsU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"highlight update new one\"\r\n   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/highlight/update/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"highlight",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyLWFkbWluIiwiaWF0IjoxNzU3NDg1NTk2LCJleHAiOjE3NTc0OTI3OTZ9.BHi2wP8RbikFZGUFJettCqcUSWJnxc8CO_lRF_ZaLsU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/highlight/delete/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"highlight",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/highlight/list",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"highlight",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/highlight/detail/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"highlight",
+								"detail",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:5000/api/v1\n",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string"
+		}
+	]
+}
