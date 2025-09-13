@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { db } from "../config/db-connection.js"
 import { RemoveFile } from "../utils/helpers.js";
+import { Conflict, NotFound, ServerError, Success } from "../utils/response.js";
 
 export const CreateBlog = async (req, res) => {
     console.log('Create blog -->', req.file, req.user?.id);
@@ -16,19 +17,17 @@ export const CreateBlog = async (req, res) => {
 
         if (existingBlog) {
             await RemoveFile(req.file?.path)
-            return res.status(208).json({ Success: false, message: "Blog Already Exist" })
+            return Conflict(res, 'Blog Title Already Exist', 'Conflict Error')
         }
-
         const responseData = await db.blog.create({ ...req.body, created_user_id: req.user?.id, blog_poster: req.file?.path })
-        return res.status(201).json({ Success: true, message: "Blog Created", data: responseData })
+        return Created(res, responseData, 'Blog Created')
     } catch (error) {
         await RemoveFile(req.file?.path)
         if (error.name == 'SequelizeUniqueConstraintError') {
-            return res.status(500).json({ Success: false, message: "Internal Server Error", error: error.errors[0].message })
-
+            return ServerError(res, 'Blog Title Already Exist', error.errors[0].message)
         }
         console.log("Blog Creating Error --->", error);
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 
@@ -48,23 +47,19 @@ export const GetAllBlog = async (req, res) => {
             totalPage: Math.round(count / limit),
             totalCount: count
         }
-
-        return res.status(200).json({ Success: true, message: "Retrive All Blog", response: { data: responseData, paginationInfo: paginationInfo } })
-
+        return Created(res, { data: responseData, paginationInfo: paginationInfo }, 'Blog Created')
     } catch (error) {
         console.log("Blog Getting Error --->", error);
-
-        res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 
 export const GetBlogDetail = async (req, res) => {
     try {
         const responseData = await db.blog.findOne({ where: { title: req.params?.title }, include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
-        return res.status(200).json({ Success: true, message: "Retrive  Blog", data: responseData })
-
+        return Success(res, responseData, "Retrive  Blog")
     } catch (error) {
-        res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 
@@ -73,7 +68,7 @@ export const UpdateBlogDetail = async (req, res) => {
         console.log('UpdateBlogDetail', req.body, req.file);
         const existBlog = await db.blog.findOne({ where: { id: req.params.id } })
         if (!existBlog || existBlog == null) {
-            return res.status(404).json({ Success: false, message: "Blog Not Exist" })
+            return NotFound(res, "Blog Not Exist")
         }
         if (req.file?.path && existBlog.blog_poster) {
             await RemoveFile(existBlog.blog_poster)
@@ -83,16 +78,13 @@ export const UpdateBlogDetail = async (req, res) => {
         existBlog.blog_poster = req.file?.path
         await existBlog.save()
         const response = await db.blog.findOne({ where: { id: req.params?.id }, include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
-
-        return res.status(200).json({ Success: true, message: "Update Blog Successfully ", data: response })
-
+        return Success(res, response, "Update  Blog Successfully")
     } catch (error) {
         await RemoveFile(req.file?.path)
         if (error.name == 'SequelizeUniqueConstraintError') {
-            return res.status(500).json({ Success: false, message: "Internal Server Error", error: error.errors[0].message })
-
+            return ServerError(res, 'Blog Title Already Exist', error.errors[0].message)
         }
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 
@@ -101,17 +93,14 @@ export const DeleteBlog = async (req, res) => {
     try {
         const existBlog = await db.blog.findOne({ where: { id: req.params.id } })
         if (!existBlog || existBlog == null) {
-            return res.status(404).json({ Success: false, message: "Blog Not Exist" })
+            return NotFound(res, "Blog Not Exist")
         }
         await db.blog.destroy({ where: { id: req.params.id } })
         const response = await RemoveFile(existBlog.blog_poster)
         console.log("response RemoveFile-->", response);
-
-        return res.status(200).json({ Success: true, message: "Blog Deleted Successfully" });
-
+        return Success(res, null, "Blog Deleted Successfully")
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
-
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 

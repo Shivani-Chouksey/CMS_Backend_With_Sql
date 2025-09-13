@@ -1,5 +1,6 @@
 import { db, sequelize } from "../config/db-connection.js";
 import { generateFourDigitOTP } from "../utils/generateOtp.js";
+import { Created, NotFound, ServerError, Success, Unauthorized } from "../utils/response.js";
 import { Send_Mail } from "../utils/sendEmail.js";
 import jwt from 'jsonwebtoken'
 
@@ -33,7 +34,7 @@ export const CreateAppUser = async (req, res) => {
                 const identityRes = await db.identityProof.create({ ...identity_proof, id_image: req.files?.identity_proof[0]?.path, legal_entity_id: legalEntity?.id, app_user_id: appUser.id, company_representative_id: companyRepresentative?.id }, { transaction })
                 console.log("identityRes-->", identityRes);
 
-                res.status(201).json({ message: `App User Created  For Role : ${role}`, Success: true })
+                return Created(res, null, `App User Created  For Role : ${role}`)
                 break;
 
             // case 'investor':
@@ -56,8 +57,7 @@ export const CreateAppUser = async (req, res) => {
 
                 await db.addressProof.create({ ...address_proof_obj, card_image: req.files?.address_proof[0]?.path, investor_advisor_id: investor_advisor.id, app_user_id: appUser.id }, { transaction })
                 await db.identityProof.create({ ...investor_advisor_obj, id_image: req.files?.identity_proof[0]?.path, investor_advisor_id: investor_advisor.id, app_user_id: appUser.id }, { transaction })
-                res.status(201).json({ message: 'App User Created - investor_advisor', Success: true })
-
+                return Created(res, null, `App User Created  For Role : ${role}`)
                 break;
         }
         await transaction.commit();
@@ -66,10 +66,9 @@ export const CreateAppUser = async (req, res) => {
     } catch (error) {
         await transaction.rollback();
         console.log('CreateAppUser error -->', error);
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
-
 
 export const GetAllAppUser = async (req, res) => {
     try {
@@ -80,15 +79,11 @@ export const GetAllAppUser = async (req, res) => {
                 { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
             ]
         });
-
-
-        return res.status(500).json({ Success: true, message: "All User ", data: response })
+        return Success(res, response, "All User ")
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
-
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
-
 
 export const GetAppUserDetail = async (req, res) => {
     try {
@@ -99,11 +94,10 @@ export const GetAppUserDetail = async (req, res) => {
                 { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
             ]
         })
-        return res.status(500).json({ Success: true, message: "User Detail ", data: responseData })
-
+        return Success(res, responseData, "User Detail ")
     }
     catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
 
     }
 }
@@ -116,7 +110,7 @@ export const AppUserLogin = async (req, res) => {
         console.log("isUserExist", isUserExist);
 
         if (!isUserExist || isUserExist == undefined || isUserExist == null) {
-            return res.status(404).json({ Success: false, message: "User Not Found" })
+            return NotFound(res, "User Not Found")
         }
         // generate random 4-digit OTP
         const random_otp = generateFourDigitOTP()
@@ -133,15 +127,12 @@ export const AppUserLogin = async (req, res) => {
         isUserExist.otp = random_otp;
         isUserExist.otp_expiry_time = otp_expiry_time;
         await isUserExist.save();
-        return res.status(200).json({ Success: true, message: "OTP Sent Successfully on Registered Email" }); // remove otp from response in production
-
+        return Success(res, '"OTP Sent Successfully on Registered Email" ')
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
 
     }
 }
-
-
 
 export const VerifyLoginOtp = async (req, res) => {
     try {
@@ -151,17 +142,14 @@ export const VerifyLoginOtp = async (req, res) => {
             attributes: {
                 exclude: ['refresh_token', 'otp_expiry_time', 'otp']
             }
-
-
         });
-
         if (!isUserExist || isUserExist == undefined || isUserExist == null) {
-            return res.status(404).json({ Success: false, message: "Invalid OTP or Email" })
+            return NotFound(res, "Invalid OTP or Email")
         }
         // check otp expiry time
         const current_time = new Date();
         if (isUserExist.otp_expiry_time < current_time) {
-            return res.status(400).json({ Success: false, message: "OTP Expired. Please login again to get new OTP" })
+            return Unauthorized(res, "OTP Expired. Please login again to get new OTP")
         }
 
         const access_token = await jwt.sign({ id: isUserExist.id, role: isUserExist.role }, process.env.JWT_SECRET, { expiresIn: process.env.jWT_EXPIRY });
@@ -174,16 +162,13 @@ export const VerifyLoginOtp = async (req, res) => {
         isUserExist.otp = null;
         isUserExist.otp_expiry_time = null;
         await isUserExist.save();
-        return res.status(200).json({ Success: true, message: "Login Successful", data: { id: isUserExist.id, role: isUserExist.role, is_active: isUserExist.is_active, email: isUserExist.email, access_token: access_token } }); // remove otp from response in production
+        return Success(res, { id: isUserExist.id, role: isUserExist.role, is_active: isUserExist.is_active, email: isUserExist.email, access_token: access_token }, "Login Successful")
     } catch (error) {
         console.log("VerifyLoginOtp error", error);
-
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
+        return ServerError(res, 'Internal Server Error', error)
 
     }
 }
-
-
 
 export const GetCurrentUser = async (req, res) => {
     try {
@@ -195,14 +180,11 @@ export const GetCurrentUser = async (req, res) => {
                 { model: db.investorAndAdvisor, attributes: ['id', 'name', 'email', 'mobile_number', 'address', 'profile_image', 'access_group', 'createdAt'], include: [{ model: db.identityProof, attributes: ['id', 'id_type', 'id_number', 'id_image', 'createdAt'] }, { model: db.addressProof, attributes: ['id', 'card_issuance_date', 'card_number', 'card_image', 'createdAt'] }] },
             ]
         });
-        return res.status(200).json({ Success: true, message: "Current User Detail", data: responseData })
-
+        return Success(res, responseData, "Current User Detail ")
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error })
-
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
-
 
 export const UpdateAppUser = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -218,7 +200,7 @@ export const UpdateAppUser = async (req, res) => {
             ]
         });
         if (!isUserExist || isUserExist === null || isUserExist === undefined) {
-            return res.status(404).json({ Success: false, message: `User Not Exist With this ID : ${req.params.id}` })
+            return NotFound(res, `User Not Exist With this ID : ${req.params.id}`)
         }
 
 
@@ -254,10 +236,9 @@ export const UpdateAppUser = async (req, res) => {
             }
         }
         await transaction.commit();
-        return res.status(200).json({ message: `App User Update successfully (role :${isUserExist.role})`, Success: true })
-
+        return Success(res, null, `App User Update successfully (role :${isUserExist.role})`)
     } catch (error) {
         console.log('UpdateAppUser', error);
-        return res.status(500).json({ Success: false, message: `Internal Server Error `, error: error.message })
+        return ServerError(res, 'Internal Server error', error.message)
     }
 }

@@ -1,24 +1,23 @@
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { db } from "../config/db-connection.js";
+import { Conflict, Created, NotFound, ServerError, Success } from "../utils/response.js";
 
 
 export const CreateCmsSuperAdmin = async (req, res) => {
     try {
-        // console.log("inside CreateCmsSuperAdmin -->",req.user);
-        
         const IsUserExist = await db.cmsUser.findOne({ where: { email: req.body.email } })
         console.log("CreateCmsSuperAdmin IsUserExist -->", IsUserExist);
 
-        if (IsUserExist != null) {
-            return res.status(404).json({ Success: false, message: "User Already Exist " });
+        if (IsUserExist) {
+            return Conflict(res, 'Already Exist', null)
         }
         await db.cmsUser.create(req.body);
-        return res.status(201).json({ Success: true, message: "CMS User Created Successfully" });
+        return Created(res, null, 'CMS User Created Successfully')
     } catch (error) {
-        console.log("CreateCmsSuperAdmin --.",error);
-        
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error.errors[0].message });
+        console.log('CreateCmsSuperAdmin --->', error);
+
+        return ServerError(res, 'Internal Server Error', error?.errors[0].message)
     }
 }
 export const CreateCmsAdmin = async (req, res) => {
@@ -27,12 +26,13 @@ export const CreateCmsAdmin = async (req, res) => {
         console.log("CreateCmsAdmin IsUserExist -->", IsUserExist);
 
         if (IsUserExist) {
-            return res.status(404).json({ Success: false, message: "User Already Exist " });
+            return Conflict(res, 'Already Exist', null)
         }
         await db.cmsUser.create(req.body);
-        return res.status(201).json({ Success: true, message: "CMS User Created Successfully" });
+        return Success(res, null, 'CMS User Created Successfully')
+
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error.errors[0].message });
+        return ServerError(res, 'Internal Server Error', error?.errors[0].message)
     }
 }
 
@@ -44,13 +44,13 @@ export const LoginCmsUser = async (req, res) => {
         console.log("LoginCmsUser IsUserExist -->", IsUserExist);
 
         if (!IsUserExist || IsUserExist === null) {
-            return res.status(404).json({ Success: false, message: "User Not Exist " });
+            return NotFound(res, 'Not Exist', null)
         }
         const ispasswordMatch = await bcrypt.compare(password, IsUserExist.password);
         console.log("ispasswordMatch -->", ispasswordMatch);
 
         if (!ispasswordMatch) {
-            return res.status(500).json({ Success: false, message: "Invalid Credentails" });
+            return Conflict(res, 'Invalid Credentails', null)
         }
         const payloadOption = {
             id: IsUserExist.id,
@@ -58,25 +58,19 @@ export const LoginCmsUser = async (req, res) => {
         }
         const token = await jwt.sign(payloadOption, process.env.JWT_SECREt, { expiresIn: process.env.jWT_EXPIRY });
         // console.log("csm-user token -->", token);
-
-        return res.status(200).json({ Success: true, message: "Login Successfullt", data: { token } })
-
-
+        return Success(res, token, 'Login Successfully')
     } catch (error) {
         console.log("LoginCmsUser error -->", error);
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
-
+        return ServerError(res, 'Internal Server Error', error?.errors[0].message)
     }
 }
 
 export const GetAllCMSUser = async (req, res) => {
     try {
-
         const responseData = await db.cmsUser.findAll({ attributes: { exclude: ['password'] } });
-        return res.status(200).json({ Success: true, message: "CMS Users Retrieved Successfully", data: responseData });
+        return Success(res, responseData, 'CMS Users List')
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "CMS User Retrieved Failed", error: error.errors[0].message });
-
+        return ServerError(res, 'Internal Server Error', error?.errors[0].message)
     }
 }
 
@@ -86,14 +80,13 @@ export const DeleteCmsUser = async (req, res) => {
         const { id } = req.params;
         const existingUser = await db.cmsUser.findOne({ where: { id } });
         if (!existingUser || existingUser === null) {
-            return res.status(404).json({ Success: false, message: "CMS User Not Found" });
+            return NotFound(res, 'CMS User Not Found', null)
         }
         await db.cmsUser.destroy({ where: { id } })
-        res.status(200).json({ Success: true, message: "CMS User Deleted Successfully" });
+        return Success(res, null, 'CMS User Deleted Successfully')
     } catch (error) {
         console.error("DeleteCmsUser error --->", error);
-        return res.status(500).json({ Success: false, message: "CMS Delete Failed", error: error?.errors[0]?.message });
-
+        return ServerError(res, 'Internal Server Error ', error?.errors[0]?.message)
     }
 }
 
@@ -115,13 +108,13 @@ export const UpdateCmsUser = async (req, res) => {
         const { id } = req.params;
         const existingUser = await db.cmsUser.findOne({ where: { id } });
         if (!existingUser || existingUser === null) {
-            return res.status(404).json({ Success: false, message: "CMS User Not Found" })
+            return NotFound(res, 'CMS User Not Found', null)
         }
-        await db.cmsUser.update({ role: req.body.role ,isActive:req.body.isActive}, { where: { id } });
-        const responseData = await db.cmsUser.findOne({ where: { id }, attributes: { exclude: ['password'] } })
-        return res.status(200).json({ Success: true, message: "CMS User Updated Successfully", data: responseData })
+        await db.cmsUser.update({ role: req.body.role, isActive: req.body.isActive }, { where: { id } });
+        const responseData = await db.cmsUser.findOne({ where: { id }, attributes: { exclude: ['password'] } });
+        return Success(res, responseData, 'CMS User Updated Successfully')
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "CMS Updation Failed", error });
+        return ServerError(res, 'Internal Server Error', error?.errors[0]?.message)
 
     }
 }
@@ -131,15 +124,14 @@ export const GetCurrentCmsUser = async (req, res) => {
         const loggedInUser = req.user;
         // console.log('loggedInUser -->', loggedInUser);
         const resposeData = await db.cmsUser.findByPk(loggedInUser.id, { attributes: { exclude: ['password'] } });
-        console.log("GetCurrentCmsUser ResponseData --->",resposeData);
-        
+        console.log("GetCurrentCmsUser ResponseData --->", resposeData);
+
         if (!resposeData || resposeData === null) {
-            return res.status(404).json({ Success: false, message: "CMS User Not Found" })
+            return NotFound(res, 'CMS User Not Found', null)
         }
-        return res.status(200).json({ Success: true, message: "Current Logged In User Retrived Successfully", data: resposeData })
+        return Success(res, resposeData, 'Current Logged In User Retrived Successfully')
 
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Logeed In User Retrive Failed", error });
-
+        return ServerError(res, 'Internal Server Error', error?.errors[0]?.message)
     }
 }

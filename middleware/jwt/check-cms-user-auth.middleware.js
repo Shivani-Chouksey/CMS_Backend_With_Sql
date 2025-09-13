@@ -1,34 +1,40 @@
 import jwt from 'jsonwebtoken'
 import { db } from '../../config/db-connection.js';
+import { ServerError, Unauthorized } from '../../utils/response.js';
 
 export const Is_Super_Admin = async (req, res, next) => {
     try {
         const token = req.headers.authorization.replace('Bearer', '').trim()
         // console.log("Is_Super_Admin Middleware token --->", token);
         if (!token || token == undefined) {
-            return res.status(401).json({ Success: false, message: "Token Not Exists " });
+          return  Unauthorized(res,'Token Not Exists')
+            // return res.status(401).json({ Success: false, message: "Token Not Exists " });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
-        // console.log('IsVerified', IsVerified);
+        console.log('IsVerified', IsVerified);
         if (!IsVerified) {
-            return res.status(401).json({ Success: false, message: "UnAutheried Access" });
+          return  Unauthorized(res,'UnAutheried Access')
+
+            // return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
         }
 
-        const { dataValues } = await db.cmsUser.findOne({ where: { id: IsVerified?.id } });
-        // console.log("FoundUser", dataValues);
+        const CmsUser = await db.cmsUser.findOne({ where: { id: IsVerified?.id } });
+        console.log("FoundUser", CmsUser);
 
-        const IsSuperAdmin = dataValues?.role === 'super-admin'
+        const IsSuperAdmin = CmsUser?.role === 'super-admin'
 
-        if (!IsSuperAdmin) {
-            return res.status(401).json({ Success: false, message: "UnAutheried Super-Admin Access", });
+        if (!CmsUser|| !IsSuperAdmin) {
+              return  Unauthorized(res,'UnAutheried  Access')
+            // return res.status(401).json({ Success: false, message: "UnAutheried Super-Admin Access", });
         }
         req.IsAdminRole = IsVerified.role
         req.user = IsVerified
         next()
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
+        return ServerError(res, 'Internal Server Error', error)
+        // return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
     }
 }
 
@@ -38,27 +44,30 @@ export const Is_Logged_In = async (req, res, next) => {
         const token = req.headers.authorization.replace('Bearer', '').trim()
         console.log("Is_Logged_In Middleware token --->", token);
         if (!token || token == undefined) {
-            return res.status(401).json({ Success: false, message: "Token Not Exists" });
+            return Unauthorized(res,'Token Not Exists')
+            // return res.status(401).json({ Success: false, message: "Token Not Exists" });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
         console.log('IsVerified', IsVerified);
         if (!IsVerified) {
-            return res.status(401).json({ Success: false, message: "UnAutheried Access" });
+            return Unauthorized(res,'UnAutheried Access')
+            // return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
         }
 
-        const { dataValues } = await db.appUser.findOne({ where: { id: IsVerified?.id } });
-        console.log("FoundUser", dataValues);
+        // const { dataValues } = await db.appUser.findOne({ where: { id: IsVerified?.id } });
+        // console.log("FoundUser", dataValues);
 
 
-        if (!dataValues || dataValues === undefined) {
-            return res.status(401).json({ Success: false, message: "UnAutheried  Access", });
-        }
+        // if (!dataValues || dataValues === undefined) {
+        //     return res.status(401).json({ Success: false, message: "UnAutheried  Access", });
+        // }
         req.user = IsVerified
         next()
     } catch (error) {
-        return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
+        return ServerError(res, 'Internal Server Error', error)
+        // return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
     }
 }
 

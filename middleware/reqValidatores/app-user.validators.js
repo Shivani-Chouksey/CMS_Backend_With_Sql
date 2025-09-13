@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { ValidationError } from '../../utils/response.js';
 
 
 const schema = joi.object({
@@ -60,39 +61,32 @@ const legal_entity_schema = joi.object({
 export const app_user_req_validator = async (req, res, next) => {
     try {
         if (req.body == undefined) {
-            return res.status(400).json({ Success: false, message: 'Request body cannot be empty.' });
+            return ValidationError(res, 'Validation Error', 'Request body cannot be empty.')
         }
         console.log("app_user_req_validator", req.body);
 
         if (!req.body.role || req.body.role == undefined) {
-            return res.status(400).json({ Success: false, message: "Invalid Request Error- Role is Required" })
-
+            return ValidationError(res, 'Validation Error', 'Invalid Request Error- Role is Required')
         }
         if (req.body.role === 'investor' || req.body.role === 'advisor') {
             const { error, value } = await investor_advisor_schema.validate(req.body)
-
             if (error) {
-                return res.status(400).json({ Success: false, message: "Invalid Request Error", error: error?.details[0].message })
-
+                return ValidationError(res, error?.details[0].message, 'Invalid Request Error')
             }
             req.body = value
             next()
         }
         if (req.body.role === 'legal_entity') {
             const { error, value } = await legal_entity_schema.validate(req.body)
-
             if (error) {
-                return res.status(400).json({ Success: false, message: "Invalid Request Error", error: error?.details[0].message })
-
+                return ValidationError(res, error?.details[0].message, 'Invalid Request Error')
             }
             req.body = value
             next()
         }
     } catch (error) {
-        console.log(error);
-
-        return res.status(400).json({ Success: false, message: "Invalid Request Error", error: error })
-
+        console.log("app_user_req_validator", error);
+        return ValidationError(res, error, 'Invalid Request Error')
     }
 }
 

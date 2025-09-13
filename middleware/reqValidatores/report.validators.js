@@ -1,5 +1,6 @@
 import joi from 'joi';
 import { RemoveFile } from '../../utils/helpers.js';
+import { ValidationError } from '../../utils/response.js';
 
 export const Report_Req_Validator = async (req, res, next) => {
     try {
@@ -13,7 +14,7 @@ export const Report_Req_Validator = async (req, res, next) => {
 
         })
         if (req.body == undefined) {
-            return res.status(400).json({ Success: false, message: 'Request body cannot be empty.' });
+            return ValidationError(res, 'Validation Error', 'Request body cannot be empty.')
         }
         req.body = { ...req.body, role: JSON.parse(req.body.role), compniesId: JSON.parse(req.body.compniesId) }
         console.log('Report_Req_Validator', req.body);
@@ -23,8 +24,7 @@ export const Report_Req_Validator = async (req, res, next) => {
             if (req.file || req.file != undefined) {
                 await RemoveFile(req.file?.path)
             }
-
-            return res.status(400).json({ Success: false, message: "Invalid Request", error: error?.details[0].message })
+            return ValidationError(res, 'Invalid Request ', error?.details[0].message)
         }
         // req.body = value
         next()
@@ -32,6 +32,6 @@ export const Report_Req_Validator = async (req, res, next) => {
         if (req.file || req.file != undefined) {
             await RemoveFile(req.file?.path)
         }
-        return res.status(400).json({ Success: false, message: "Invalid Request", error: error })
+        return ValidationError(res, 'Invalid Request ', error)
     }
 }
