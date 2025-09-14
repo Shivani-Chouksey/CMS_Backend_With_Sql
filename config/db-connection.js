@@ -12,20 +12,20 @@ import { AddressProof } from "../models/address-proof.model.js";
 import { IdentityProof } from "../models/identity-proof.model.js";
 import { Report } from "../models/report.model.js";
 import { HighLight } from "../models/highlight.model.js";
-// export const sequelize = new Sequelize(process.env.SQL_URI)
+export const sequelize = new Sequelize(process.env.SQL_URI,{dialect:"mysql"})
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
 const password = process.env.DB_PASSWORD
 const database = process.env.DB_NAME
 const port =process.env.DB_PORT
 export const db = {}
-export const sequelize = new Sequelize(database, user, password, {
-    host: host, // or your remote IP
-    port:port,
-    dialect: "mysql",
-    pool: { max: 5, min: 0, idle: 10000 },
-    logging: false
-});
+// export const sequelize = new Sequelize(database, user, password, {
+//     host: host, // or your remote IP
+//     port:port,
+//     dialect: "mysql",
+//     pool: { max: 5, min: 0, idle: 10000 },
+//     logging: false
+// });
 export const DbConnection = async () => {
     try {
         await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
