@@ -2,13 +2,14 @@ import nodeMailer from 'nodemailer'
 
 const transporter = nodeMailer.createTransport({
     host: process.env.SMTP_EMAIL_HOST,
-    port: process.env.SMTP_EMAIL_PORT,
+    port: process.env.SMTP_EMAIL_PORT, //465
+    secure:process.env.SMTP_EMAIL_PORT == 465
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD
     },
-    // logger: true,   // enable logs
-    // debug: true,    // show debug output
+    logger: true,   // enable logs
+    debug: true,    // show debug output
 })
 
 
@@ -25,8 +26,10 @@ export const Send_Mail = async (options) => {
 
         console.log("✅ Mail sent successfully");
         console.log("📨 Message ID:", info.messageId);
+        return info
         // console.log("📤 Preview URL (if Ethereal):", nodeMailer.getTestMessageUrl(info));
     } catch (error) {
         console.error("Error while sending mail", error);
+        throw error;
     }
 }
