@@ -28,7 +28,7 @@ export const db = {}
 // });
 export const DbConnection = async () => {
     try {
-        await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
+       // await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
 
         await sequelize.authenticate();
 
