@@ -1,5 +1,5 @@
 import nodeMailer from 'nodemailer'
-console.log("process.env.SMTP_EMAIL_PORT",process.env.SMTP_EMAIL_PORT);
+
 const transporter = nodeMailer.createTransport({
     host: process.env.SMTP_EMAIL_HOST,
     port: process.env.SMTP_EMAIL_PORT || 587, //465
@@ -16,6 +16,7 @@ const transporter = nodeMailer.createTransport({
 
 export const Send_Mail = async (options) => {
     try {
+        console.log("process.env.SMTP_EMAIL_PORT",process.env.SMTP_EMAIL_PORT);
         console.log("Inside send mail otp", options);
         const info = await transporter.sendMail({
             from: `"Shivani Login OTP :" <${process.env.EMAIL_USER}>`, // ✅ use your Gmail
