@@ -1,9 +1,10 @@
 import nodeMailer from 'nodemailer'
-
+console.log("process.env.SMTP_EMAIL_PORT",process.env.SMTP_EMAIL_PORT);
 const transporter = nodeMailer.createTransport({
     host: process.env.SMTP_EMAIL_HOST,
-    port: process.env.SMTP_EMAIL_PORT, //465
-    secure:process.env.SMTP_EMAIL_PORT == 465,
+    port: process.env.SMTP_EMAIL_PORT || 587, //465
+    // secure:process.env.SMTP_EMAIL_PORT == 465,
+     secure:false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD
