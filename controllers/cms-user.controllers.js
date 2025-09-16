@@ -57,11 +57,11 @@ export const LoginCmsUser = async (req, res) => {
             role: IsUserExist.role
         }
         const token = await jwt.sign(payloadOption, process.env.JWT_SECREt, { expiresIn: process.env.jWT_EXPIRY });
-        // console.log("csm-user token -->", token);
+        console.log("csm-user token -->", token);
         return Success(res, token, 'Login Successfully')
     } catch (error) {
         console.log("LoginCmsUser error -->", error);
-        return ServerError(res, 'Internal Server Error', error?.errors[0].message)
+        return ServerError(res, 'Internal Server Error', error)
     }
 }
 
