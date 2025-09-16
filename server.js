@@ -22,6 +22,8 @@ const accessLogStream = fs.createWriteStream(path.join(logDirectory, "access.log
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(morgan('dev'))
 
+// Health Check route
+app.use('/health-check',(req,res)=>{res.send('CMS Backend With SQL Running')})
 
 // All Routes
 app.use('/api/v1', All_API_Routes);
