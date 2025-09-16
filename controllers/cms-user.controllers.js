@@ -47,7 +47,7 @@ export const LoginCmsUser = async (req, res) => {
             return NotFound(res, 'Not Exist', null)
         }
         const ispasswordMatch = await bcrypt.compare(password, IsUserExist.password);
-        console.log("ispasswordMatch -->", ispasswordMatch);
+        console.log("ispasswordMatch -->", ispasswordMatch,"process.env.JWT_SECREt",process.env.JWT_SECREt);
 
         if (!ispasswordMatch) {
             return Conflict(res, 'Invalid Credentails', null)
