@@ -7,7 +7,8 @@ const transporter = nodeMailer.createTransport({
      secure:false,
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD
+      //  pass: process.env.EMAIL_APP_PASSWORD
+         pass: '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'
     },
     logger: true,   // enable logs
     debug: true,    // show debug output
