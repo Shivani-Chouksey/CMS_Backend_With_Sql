@@ -68,6 +68,6 @@ export const Send_Mail = async (options) => {
         if (error.response) {
             console.error(error.response.body)
         }
-        return false
+        return error
     }
 }
