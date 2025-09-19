@@ -2,7 +2,8 @@ import nodeMailer from 'nodemailer'
 
 const transporter = nodeMailer.createTransport({
     host: 'smtp.sendgrid.net',
-    port: process.env.SMTP_EMAIL_PORT || 587, //465
+    port:443, //465
+    // port: process.env.SMTP_EMAIL_PORT || 587, //465
     // secure:process.env.SMTP_EMAIL_PORT == 465,
      secure:false,
     auth: {
