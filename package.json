@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Shivani-Chouksey/CMS_Backend_Task#readme",
   "description": "",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
