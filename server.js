@@ -5,7 +5,8 @@ import { DbConnection } from './config/db-connection.js';
 import morgan from 'morgan';
 import path from 'node:path';
 import fs from 'node:fs';
-
+import { apiSpecification } from './config/swagger-docs.js';
+import swaggerUi from 'swagger-ui-express'
 const app = express();
 app.use(express.json());
 
@@ -22,9 +23,12 @@ const accessLogStream = fs.createWriteStream(path.join(logDirectory, "access.log
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(morgan('dev'))
 
-// Health Check route
+console.log(JSON.stringify(apiSpecification, null, 2));
+//swagger config
+app.use('/api-docs',swaggerUi.serve ,swaggerUi.setup(apiSpecification) );
 
-app.get('/health-check', (req, res) => {
+
+app.get('/api/v1/health-check', (req, res) => {
   res.send('CMS Backend With SQL Running');
 });
 
