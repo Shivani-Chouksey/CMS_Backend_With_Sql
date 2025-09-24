@@ -69,16 +69,13 @@ export const GetAllCMSUser = async (req, res) => {
     try {
         let { limit, page } = req.query;
 
-
         // Convert to numbers if present
         limit = limit ? parseInt(limit) : null;
         page = page ? parseInt(page) : null;
 
-
         let queryOptions = {
             attributes: { exclude: ['password'] }
         };
-
 
         if (limit && page) {
             const skip = (page - 1) * limit;
@@ -88,8 +85,7 @@ export const GetAllCMSUser = async (req, res) => {
 
         const responseData = await db.cmsUser.findAll(queryOptions);
         const totalRecordCount = await db.cmsUser.count();
-
-
+        
         const pagination = limit && page
             ? {
                 page,
