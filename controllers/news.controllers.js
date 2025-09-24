@@ -36,8 +36,31 @@ export const CreateNews = async (req, res) => {
 
 export const GetAllNews = async (req, res) => {
     try {
-        const responseData = await db.news.findAll({ include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
-        return Success(res, responseData, "Retrive All News")
+        let { page, limit } = req.query;
+
+        page = page ? parseInt(page) : null;
+        limit = limit ? parseInt(limit) : null;
+
+        const queryOptions = {
+            include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }]
+        }
+
+        if (limit && page) {
+            const skip = (page - 1) * limit;
+            queryOptions.limit = limit;
+            queryOptions.offset = skip;
+        }
+
+
+        const responseData = await db.news.findAll(queryOptions)
+        const totalRecordCount = await db.news.count();
+        const pagination = {
+            page,
+            limit,
+            totalRecord: totalRecordCount,
+            totalPages: Math.ceil(totalRecordCount / limit)
+        }
+        return Success(res, { data: responseData, pagination }, "Retrive All News")
     } catch (error) {
         console.log("News Getting Error --->", error);
         return ServerError(res, 'Internal Server Error', error)
