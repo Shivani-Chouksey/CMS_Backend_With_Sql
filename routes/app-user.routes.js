@@ -14,7 +14,7 @@ router.post('/create', Is_Super_Admin, createUpload("app-user", {
     { name: 'address_proof', maxCount: 1 },
 ]), app_user_req_validator, CreateAppUser)
 
-router.get("/all", GetAllAppUser);
+router.get("/all", Is_Super_Admin,GetAllAppUser);
 router.get("/detail/:id", GetAppUserDetail);
 router.post("/login/otp", AppUserLogin);
 router.post("/verify-otp", VerifyLoginOtp);

@@ -196,10 +196,12 @@ export const CreateAppUser = async (req, res) => {
         await transaction.commit();
         return Created(res, null, responseMessage);
     } catch (error) {
-        await transaction.rollback(); console.error("CreateAppUser error -->", error);
+        console.log("CreateAppUser Error", error.name);
 
-        if (error.name === "SequelizeValidationError") {
-            return ServerError(res, "Validation Error", error.errors[0]?.message);
+        await transaction.rollback();
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+            const messages = error.errors.map(err => err.message);
+            return ServerError(res, "Internal Server Error", messages);
         }
         return ServerError(res, "Internal Server Error", error.message || error);
     }
@@ -209,14 +211,39 @@ export const CreateAppUser = async (req, res) => {
 
 export const GetAllAppUser = async (req, res) => {
     try {
-        const response = await db.appUser.findAll({
+        let { limit, page } = req.query;
+
+        // Convert to numbers if present
+        limit = limit ? parseInt(limit) : null;
+        page = page ? parseInt(page) : null;
+
+        let queryOptions = {
             include: [
                 { model: db.cmsUser, attributes: ['id', 'role', 'userName'] },
                 { model: db.legalEntity, include: [{ model: db.companyRepresentative, include: [{ model: db.identityProof }, { model: db.addressProof }] }] },
                 { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
             ]
-        });
-        return Success(res, response, "All User ")
+        }
+
+        if (limit && page) {
+            const skip = (page - 1) * limit;
+            queryOptions.limit = limit;
+            queryOptions.offset = skip;
+        }
+        const response = await db.appUser.findAll(queryOptions);
+        const totalRecordCount = await db.appUser.count();
+
+        const pagination = limit && page
+            ? {
+                page,
+                limit,
+                totalRecord: totalRecordCount,
+                totalPages: Math.ceil(totalRecordCount / limit)
+            }
+            : null;
+
+
+        return Success(res, { data: response, pagination }, "All User ")
     } catch (error) {
         return ServerError(res, 'Internal Server Error', error)
     }
@@ -231,6 +258,9 @@ export const GetAppUserDetail = async (req, res) => {
                 { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
             ]
         })
+         if (!responseData || responseData == undefined || responseData == null) {
+            return NotFound(res, "User Not Found")
+        }
         return Success(res, responseData, "User Detail ")
     }
     catch (error) {
