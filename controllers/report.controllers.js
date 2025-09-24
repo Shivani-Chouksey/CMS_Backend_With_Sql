@@ -26,9 +26,13 @@ export const CreateReport = async (req, res) => {
 
 export const GetReportList = async (req, res) => {
     try {
-        console.log("Logged in user details", req.user);
+        let { limit, page } = req.query;
 
-        const reportList = await db.report.findAll({
+        // Convert to numbers if present
+        limit = limit ? parseInt(limit) : null;
+        page = page ? parseInt(page) : null;
+
+        let queryOptions = {
             where: {
                 role: {
                     [Op.like]: `%${req.user.role}%`
@@ -36,8 +40,27 @@ export const GetReportList = async (req, res) => {
             },
             attributes: { exclude: ['access_group', 'createdBy'] },
             include: { model: db.cmsUser, as: "createdByUser", attributes: ['id', "username", 'role'] },
-        });
-        return Success(res, reportList, "Report List")
+        }
+
+        if (limit && page) {
+            const skip = (page - 1) * limit;
+            queryOptions.limit = limit;
+            queryOptions.offset = skip;
+        }
+        const reportList = await db.report.findAll();
+        const totalRecordCount = await db.report.count();
+
+        const pagination = limit && page
+            ? {
+                page,
+                limit,
+                totalRecord: totalRecordCount,
+                totalPages: Math.ceil(totalRecordCount / limit)
+            }
+            : null;
+
+
+        return Success(res, { data: reportList, pagination }, "Report List")
     } catch (error) {
         console.log(error);
         return ServerError(res, 'Internal Server Error', error)
@@ -103,7 +126,15 @@ export const UpdateReportDetail = async (req, res) => {
             isReportExist.save()
         }
 
-        const updatedReport = await db.report.update({ ...req.body, role: JSON.stringify(req?.body.role) }, { where: { id: req.params.id } });
+        const updatedReportId = await db.report.update({ ...req.body, role: JSON.stringify(req?.body.role) }, { where: { id: req.params.id } });
+        const updatedReport = await db.report.findOne({
+            where: {
+
+                id: updatedReportId
+            },
+            include: { model: db.cmsUser, as: "createdByUser", attributes: ['id', "username", 'role'] },
+            attributes: { exclude: ['role', 'createdBy'] }
+        });
         return Success(res, updatedReport, "Report Updated Successfully")
     } catch (error) {
         console.log(error);

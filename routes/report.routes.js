@@ -15,7 +15,7 @@ router.get("/detail/:id", Is_Logged_In, GetReportDetail);
 router.patch("/update/:id", Is_Super_Admin, createUpload("report", {
     fileSize: 5 * 1024 * 1024, // 2MB
     allowedTypes: ["image/jpeg", "image/png", 'application/pdf'],
-}).single("report_file"), Report_Req_Validator, UpdateReportDetail)
+}).single("report_file"), UpdateReportDetail)
 router.delete("/delete/:id", DeleteReport);
 
 export default router;
