@@ -10,7 +10,7 @@ function HighLight(sequelize) {
         description: {
             type: DataTypes.STRING,
             required: true,
-            unique: true
+            // unique: true
         },
         createdBy: {
             type: DataTypes.INTEGER,
