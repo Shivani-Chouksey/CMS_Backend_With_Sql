@@ -17,7 +17,7 @@ router.post("/create",Is_Super_Admin, createUpload("company", {
 router.get("/list", GetCompanyList)
 router.get("/detail/:id", GetCompanyDetail)
 router.delete("/delete/:id", Is_Super_Admin, DeleteCompany)
-router.patch("/update/:id", createUpload("company", {
+router.patch("/update/:id", Is_Super_Admin, createUpload("company", {
     fileSize: 5 * 1024 * 1024, // 2MB
     allowedTypes: ["image/jpeg", "image/png", 'application/pdf'],
 }).single("company_logo"), UpdateCompanyDetail)

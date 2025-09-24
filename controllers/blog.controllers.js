@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import { db } from "../config/db-connection.js"
 import { RemoveFile } from "../utils/helpers.js";
-import { Conflict, NotFound, ServerError, Success } from "../utils/response.js";
+import { Conflict, Created, NotFound, ServerError, Success, ValidationError } from "../utils/response.js";
 
 export const CreateBlog = async (req, res) => {
     console.log('Create blog -->', req.file, req.user?.id);
@@ -56,7 +56,13 @@ export const GetAllBlog = async (req, res) => {
 
 export const GetBlogDetail = async (req, res) => {
     try {
+        if (!req.params?.title) {
+            return ValidationError(res, 'title is missing')
+        }
         const responseData = await db.blog.findOne({ where: { title: req.params?.title }, include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] })
+        if (!responseData || responseData == null) {
+            return NotFound(res, "Blog Not Exist")
+        }
         return Success(res, responseData, "Retrive  Blog")
     } catch (error) {
         return ServerError(res, 'Internal Server Error', error)

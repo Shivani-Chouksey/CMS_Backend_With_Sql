@@ -25,8 +25,33 @@ export const CreateCompany = async (req, res) => {
 
 export const GetCompanyList = async (req, res) => {
     try {
-        const responseData = await db.company.findAll({ include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }] });
-        return Success(res, responseData, "All Company List")
+        let { limit, page } = req.query;
+
+        // Convert to numbers if present
+        limit = limit ? parseInt(limit) : null;
+        page = page ? parseInt(page) : null;
+
+        let queryOptions = {
+            include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }]
+        };
+
+        if (limit && page) {
+            const skip = (page - 1) * limit;
+            queryOptions.limit = limit;
+            queryOptions.offset = skip;
+        }
+        const responseData = await db.company.findAll(queryOptions);
+        const totalRecordCount = await db.company.count();
+
+        const pagination = limit && page
+            ? {
+                page,
+                limit,
+                totalRecord: totalRecordCount,
+                totalPages: Math.ceil(totalRecordCount / limit)
+            }
+            : null;
+        return Success(res, { data: responseData, pagination }, "All Company List")
     } catch (error) {
         console.log('GetCompanyList-->', error);
         if (error.name === 'SequelizeEagerLoadingError') {
