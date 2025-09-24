@@ -47,7 +47,7 @@ export const LoginCmsUser = async (req, res) => {
             return NotFound(res, 'Not Exist', null)
         }
         const ispasswordMatch = await bcrypt.compare(password, IsUserExist.password);
-        console.log("ispasswordMatch -->", ispasswordMatch,"process.env.JWT_SECREt",process.env.JWT_SECRET);
+        // console.log("ispasswordMatch -->", ispasswordMatch, "process.env.JWT_SECREt", process.env.JWT_SECRET);
 
         if (!ispasswordMatch) {
             return Conflict(res, 'Invalid Credentails', null)
@@ -58,7 +58,7 @@ export const LoginCmsUser = async (req, res) => {
         }
         const token = await jwt.sign(payloadOption, process.env.JWT_SECRET, { expiresIn: process.env.jWT_EXPIRY });
         console.log("csm-user token -->", token);
-        return Success(res, token, 'Login Successfully')
+        return Success(res, { token: token }, 'Login Successfully')
     } catch (error) {
         console.log("LoginCmsUser error -->", error);
         return ServerError(res, 'Internal Server Error', error)
@@ -67,9 +67,42 @@ export const LoginCmsUser = async (req, res) => {
 
 export const GetAllCMSUser = async (req, res) => {
     try {
-        const responseData = await db.cmsUser.findAll({ attributes: { exclude: ['password'] } });
-        return Success(res, responseData, 'CMS Users List')
+        let { limit, page } = req.query;
+
+
+        // Convert to numbers if present
+        limit = limit ? parseInt(limit) : null;
+        page = page ? parseInt(page) : null;
+
+
+        let queryOptions = {
+            attributes: { exclude: ['password'] }
+        };
+
+
+        if (limit && page) {
+            const skip = (page - 1) * limit;
+            queryOptions.limit = limit;
+            queryOptions.offset = skip;
+        }
+
+        const responseData = await db.cmsUser.findAll(queryOptions);
+        const totalRecordCount = await db.cmsUser.count();
+
+
+        const pagination = limit && page
+            ? {
+                page,
+                limit,
+                totalRecord: totalRecordCount,
+                totalPages: Math.ceil(totalRecordCount / limit)
+            }
+            : null;
+
+        return Success(res, { data: responseData, pagination: pagination }, 'CMS Users List')
     } catch (error) {
+        console.error('GetAllCMSUser', error);
+
         return ServerError(res, 'Internal Server Error', error?.errors[0].message)
     }
 }
