@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { db } from "../config/db-connection.js";
 
 // ✅ Define globally (outside io.on) - In-memory map of connected users
@@ -9,7 +10,7 @@ function scoketHandler(io) {
 
 
         // 🔐 Register user and map socket
-        socket.on('register', async (userId) => {
+        socket.on('register', async ({ userId }) => {
             console.log(`User registered: ${userId}`);
             socket.userId = userId;
             users[userId] = socket.id; // Save mapping
@@ -66,6 +67,22 @@ function scoketHandler(io) {
             } catch (error) {
                 console.error("Error in send_message:", error);
             }
+        });
+
+
+        // Read Notification
+        socket.on('mark_as_read', async ({ notificationIds }) => {
+            // console.log('notificationIds',notificationIds);
+
+            const notificationStatusChangeToRead = await db.notification.update(
+                { isRead: true },
+                {
+                    where: {
+                        id: { [Op.in]: notificationIds }
+                    }
+                });
+            // console.log("notificationStatusChangeToRead", notificationStatusChangeToRead);
+
         });
 
         socket.on('disconnect', () => {
