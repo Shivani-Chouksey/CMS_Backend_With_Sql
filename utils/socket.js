@@ -23,7 +23,7 @@ function scoketHandler(io) {
                     receiver_id: userId,
                     isRead: false
                 },
-                include: [{ model: db.messages, attributes: ["content", "read"], as: 'messageFromSendor' }]
+                include: [{ model: db.messages, attributes: ["content", "read"], as: 'messageFromSendor' }, { model: db.appUser, attributes: ["role", "email"], as: 'senderInfo' }]
             });
 
             console.log("unreadMessagesList -----> ", unreadMessagesList);
@@ -31,15 +31,12 @@ function scoketHandler(io) {
             // 🔔 2. Emit each notification
             Array.isArray(unreadMessagesList).length && unreadMessagesList.forEach(element => {
                 socket.emit('new_message', {
-                    from: element.sender_id,
-                    message: element.message_id,
+                    from: element.senderInfo,
+                    message: element.messageFromSendor,
 
                 })
             });
             // ✅ 3. Optionally mark as read
-
-
-            // await connection.end();
 
         });
 
@@ -81,7 +78,7 @@ function scoketHandler(io) {
                         id: { [Op.in]: notificationIds }
                     }
                 });
-            // console.log("notificationStatusChangeToRead", notificationStatusChangeToRead);
+            console.log("notificationStatusChangeToRead", notificationStatusChangeToRead);
 
         });
 
