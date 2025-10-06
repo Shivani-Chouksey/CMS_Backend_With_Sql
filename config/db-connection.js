@@ -12,23 +12,25 @@ import { AddressProof } from "../models/address-proof.model.js";
 import { IdentityProof } from "../models/identity-proof.model.js";
 import { Report } from "../models/report.model.js";
 import { HighLight } from "../models/highlight.model.js";
+import { Messages } from "../models/message.model.js";
+import { Notification } from "../models/notification.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI,{dialect:"mysql"})
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
 const password = process.env.DB_PASSWORD
 const database = process.env.DB_NAME
-const port =process.env.DB_PORT
+const port = process.env.DB_PORT
 export const db = {}
- export const sequelize = new Sequelize(database, user, password, {
+export const sequelize = new Sequelize(database, user, password, {
     host: host, // or your remote IP
-    port:port,
+    port: port,
     dialect: "mysql",
-     pool: { max: 5, min: 0, idle: 10000 },
+    pool: { max: 5, min: 0, idle: 10000 },
     logging: false
 });
 export const DbConnection = async () => {
     try {
-       // await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
+        // await mysql.createConnection({ host, user, password, database, pool: { max: 5, min: 0, idle: 10000 } });
 
         await sequelize.authenticate();
 
@@ -44,7 +46,10 @@ export const DbConnection = async () => {
         db.addressProof = AddressProof(sequelize);
         db.identityProof = IdentityProof(sequelize);
         db.report = Report(sequelize);
-        db.highlight = HighLight(sequelize)
+        db.highlight = HighLight(sequelize);
+        db.messages = Messages(sequelize);
+        db.notification = Notification(sequelize);
+
 
         // Assosications - Table Relations
         // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
@@ -87,14 +92,14 @@ export const DbConnection = async () => {
         db.report.belongsTo(db.cmsUser, { foreignKey: 'createdBy', as: "createdByUser" })
 
         //highlight relation with highlight
-        db.highlight.belongsTo(db.cmsUser, { foreignKey: 'createdBy' , as: "createdByUser"});
+        db.highlight.belongsTo(db.cmsUser, { foreignKey: 'createdBy', as: "createdByUser" });
 
+        // messags and notification relation
+        db.notification.belongsTo(db.messages,{foreignKey:'message_id',as : "messageFromSendor"})
 
         await sequelize.sync({ force: false });
-
-
-        console.log("Database Connected Successfully")
+        console.log("Database Connected Successfully");
     } catch (error) {
-        console.log("Database Connection Failed ---> ", error)
+        console.error("Database Connection Failed ---> ", error)
     }
 }
