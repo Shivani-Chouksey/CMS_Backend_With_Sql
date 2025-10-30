@@ -2,6 +2,11 @@ import { DataTypes } from "sequelize"
 import jwt from "jsonwebtoken"
 function AppUser(sequelize) {
     const attributes = {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         role: {
             type: DataTypes.ENUM,
             values: ['investor', 'advisor', 'legal_entity']
@@ -31,11 +36,11 @@ function AppUser(sequelize) {
         },
         refresh_token: {
             type: DataTypes.TEXT
-        }
+        },
     }
     const options = {
         timestamp: true,
-
+        freezeTableName: true // prevents Sequelize from pluralizing table name
     }
     return sequelize.define('app_user', attributes, options)
 }

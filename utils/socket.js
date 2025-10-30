@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import { db } from "../config/db-connection.js";
 
 // ✅ Define globally (outside io.on) - In-memory map of connected users
-const users = {}; // userId -> socket.id
+export const users = {}; // userId -> socket.id
 
 function scoketHandler(io) {
     io.on('connection', (socket) => {

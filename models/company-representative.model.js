@@ -20,7 +20,7 @@ export const CompanyRepresentative =  (sequelize) => {
         app_user_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'app_users',
+                model: 'app_user',
                 key: 'id',
             },
         },

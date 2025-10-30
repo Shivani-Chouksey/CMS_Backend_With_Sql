@@ -14,6 +14,8 @@ import { Report } from "../models/report.model.js";
 import { HighLight } from "../models/highlight.model.js";
 import { Messages } from "../models/message.model.js";
 import { Notification } from "../models/notification.model.js";
+import { CompanyRequest } from "../models/company-request.model.js";
+import { UserCompanyTransaction } from "../models/transaction.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI,{dialect:"mysql"})
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -49,6 +51,8 @@ export const DbConnection = async () => {
         db.highlight = HighLight(sequelize);
         db.messages = Messages(sequelize);
         db.notification = Notification(sequelize);
+        db.companyRequest = CompanyRequest(sequelize);
+        db.userCompanyTransaction = UserCompanyTransaction(sequelize);
 
 
         // Assosications - Table Relations
@@ -95,7 +99,13 @@ export const DbConnection = async () => {
         db.highlight.belongsTo(db.cmsUser, { foreignKey: 'createdBy', as: "createdByUser" });
 
         // messags and notification relation
-        db.notification.belongsTo(db.messages,{foreignKey:'message_id',as : "messageFromSendor"})
+        db.notification.belongsTo(db.messages, { foreignKey: 'message_id', as: "messageFromSendor" })
+        db.notification.belongsTo(db.appUser, { foreignKey: 'sender_id', as: "senderInfo" })
+
+        //companyReq and user relation
+        db.companyRequest.belongsTo(db.appUser, { foreignKey: "user_id" ,as :"requesterInfo" });
+        db.companyRequest.belongsTo(db.company, { foreignKey: "company_id" ,as :"companyInfo" });
+        db.notification.belongsTo(db.companyRequest,{ foreignKey: "company_req_id" });
 
         await sequelize.sync({ force: false });
         console.log("Database Connected Successfully");

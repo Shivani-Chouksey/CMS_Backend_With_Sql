@@ -10,7 +10,11 @@ function Messages(sequelize) {
         receiver_id: {
             type: DataTypes.INTEGER,
             require: true,
-            allowNull: false
+            // allowNull: false
+        },
+        request_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false // links message to a specific company request
         },
         content: {
             type: DataTypes.STRING,

@@ -9,7 +9,8 @@ import { apiSpecification } from './config/swagger-docs.js';
 import swaggerUi from 'swagger-ui-express'
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import scoketHandler from './utils/socket.js';
+// import scoketHandler from './utils/socket.js';
+import SocketHandler from './utils/socketHandler.js';
 
 const app = express();
 const server = createServer(app);
@@ -43,7 +44,8 @@ app.get('/api/v1/health-check', (req, res) => {
 app.use('/api/v1', All_API_Routes);
 
 // ✅ Initialize Socket.io logic
-scoketHandler(io)
+// scoketHandler(io)
+SocketHandler(io)
 
 await DbConnection().then(() => {
     server.listen(process.env.PORT, () => {
