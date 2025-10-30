@@ -5,7 +5,8 @@ import COMPANY_Routes from './company.routes.js';
 import BLOG_Routes from './blog.routes.js'
 import App_User_Routes from './app-user.routes.js'
 import Report_Routes from './report.routes.js';
-import HIGHLIGHT_ROUTES from './highlight.routes.js'
+import HIGHLIGHT_ROUTES from './highlight.routes.js';
+import NOTIFICATIONSROUTES from './notificatiton.routes.js'
 const router = express.Router();
 
 
@@ -17,4 +18,5 @@ router.use("/blog", BLOG_Routes);
 router.use("/app-user", App_User_Routes)
 router.use("/report", Report_Routes)
 router.use('/highlight', HIGHLIGHT_ROUTES)
+router.use('/notifications',NOTIFICATIONSROUTES)
 export default router;

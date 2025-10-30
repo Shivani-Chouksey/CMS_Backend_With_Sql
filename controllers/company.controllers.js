@@ -153,7 +153,9 @@ export const CompanyReq = async (req, res) => {
             sender_id: user_id,
             type: "company_request",
             message_id: messageReponse.id,
-            isRead: false
+            isRead: false,
+            company_req_id:requestData.id
+
         }))
         console.log("notifications -------> ", notifications);
 

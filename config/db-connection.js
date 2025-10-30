@@ -101,11 +101,12 @@ export const DbConnection = async () => {
         // messags and notification relation
         db.notification.belongsTo(db.messages, { foreignKey: 'message_id', as: "messageFromSendor" })
         db.notification.belongsTo(db.appUser, { foreignKey: 'sender_id', as: "senderInfo" })
+        db.notification.belongsTo(db.companyRequest, { foreignKey: 'company_req_id', as: "CompanyReqInfo" })
 
         //companyReq and user relation
-        db.companyRequest.belongsTo(db.appUser, { foreignKey: "user_id" ,as :"requesterInfo" });
-        db.companyRequest.belongsTo(db.company, { foreignKey: "company_id" ,as :"companyInfo" });
-        db.notification.belongsTo(db.companyRequest,{ foreignKey: "company_req_id" });
+        db.companyRequest.belongsTo(db.appUser, { foreignKey: "user_id", as: "requesterInfo" });
+        db.companyRequest.belongsTo(db.company, { foreignKey: "company_id", as: "companyInfo" });
+        db.notification.belongsTo(db.companyRequest, { foreignKey: "company_req_id" });
 
         await sequelize.sync({ force: false });
         console.log("Database Connected Successfully");
