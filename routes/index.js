@@ -7,6 +7,8 @@ import App_User_Routes from './app-user.routes.js'
 import Report_Routes from './report.routes.js';
 import HIGHLIGHT_ROUTES from './highlight.routes.js';
 import NOTIFICATIONSROUTES from './notificatiton.routes.js'
+import { ApprovedAiOfficerReq, AssignAiOfficerToRequest, ReqAiOfficer } from '../controllers/req_ai_officer.controller.js';
+import { Is_Super_Admin } from '../middleware/jwt/check-cms-user-auth.middleware.js';
 const router = express.Router();
 
 
@@ -19,4 +21,9 @@ router.use("/app-user", App_User_Routes)
 router.use("/report", Report_Routes)
 router.use('/highlight', HIGHLIGHT_ROUTES)
 router.use('/notifications',NOTIFICATIONSROUTES)
+router.post("/req-ai-officer",ReqAiOfficer);
+router.post('/approve-ai-officer-req',ApprovedAiOfficerReq);
+router.post('/assign-ai-officer',Is_Super_Admin,AssignAiOfficerToRequest);
+
+
 export default router;

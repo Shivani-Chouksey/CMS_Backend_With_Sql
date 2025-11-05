@@ -258,7 +258,7 @@ export const GetAppUserDetail = async (req, res) => {
                 { model: db.investorAndAdvisor, include: [{ model: db.identityProof }, { model: db.addressProof }] },
             ]
         })
-         if (!responseData || responseData == undefined || responseData == null) {
+        if (!responseData || responseData == undefined || responseData == null) {
             return NotFound(res, "User Not Found")
         }
         return Success(res, responseData, "User Detail ")
@@ -277,9 +277,9 @@ export const AppUserLogin = async (req, res) => {
         console.log("isUserExist", isUserExist);
 
         if (!isUserExist || isUserExist == undefined || isUserExist == null) {
-            return NotFound(res, "User Not Found")
+            return NotFound(res, "User Not Found",null,404)
         }
-        // generate random 4-digit OTP
+        // generate random 6-digit OTP
         const random_otp = generateFourDigitOTP()
         const otp_options = {
             user: req.body.email,

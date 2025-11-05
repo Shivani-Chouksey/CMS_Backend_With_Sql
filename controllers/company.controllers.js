@@ -1,7 +1,7 @@
 import { db } from "../config/db-connection.js"
 import { RemoveFile } from "../utils/helpers.js"
 import { Conflict, Created, NotFound, ServerError, Success } from "../utils/response.js"
-import { getAllUserSockets, getSocketInstance } from "../utils/socketHandler.js"
+import { getAllUserSockets, getSocketInstance, getUserSocket } from "../utils/socketHandler.js"
 
 export const CreateCompany = async (req, res) => {
     try {
@@ -63,8 +63,6 @@ export const GetCompanyList = async (req, res) => {
     }
 }
 
-
-
 export const GetCompanyDetail = async (req, res) => {
     try {
         const { id } = req.params
@@ -79,7 +77,6 @@ export const GetCompanyDetail = async (req, res) => {
 
     }
 }
-
 
 export const UpdateCompanyDetail = async (req, res) => {
     try {
@@ -106,7 +103,6 @@ export const UpdateCompanyDetail = async (req, res) => {
     }
 }
 
-
 export const DeleteCompany = async (req, res) => {
     try {
         const { id } = req.params;
@@ -127,36 +123,60 @@ export const DeleteCompany = async (req, res) => {
 export const CompanyReq = async (req, res) => {
     try {
         console.log("req data --->", req.body);
-
-        const { user_id, expressed_interest, message, company_id } = req.body
+        const { requester_id, expressed_interest, message, company_id } = req.body
         const requestData = await db.companyRequest.create(req.body);
 
         // Step 2: Store the initial message
-        const messageReponse = await db.messages.create({
-            sender_id: user_id,
+        const messageResponse = await db.messages.create({
+            sender_id: requester_id,
             receiver_id: null, // will be filled when someone accepts
             request_id: requestData.id,
             content: message
         });
-
 
         // Step 3: Get all users in the company except the requester
         const userList = await db.userCompanyTransaction.findAll({ where: { company_id } });
         console.log("userList userCompanyTransaction---------> ", userList);
 
         // Filter out the user who made the request
-        const filteredUsers = userList.filter(user => user.user_id !== user_id);
+        const filteredUsers = userList.filter(user => user.buyer_id !== requester_id);
         console.log("filteredUsers ----------->", filteredUsers);
 
-        const notifications = filteredUsers.map(user => ({
-            receiver_id: user.user_id,
-            sender_id: user_id,
-            type: "company_request",
-            message_id: messageReponse.id,
-            isRead: false,
-            company_req_id:requestData.id
+        // const notifications = filteredUsers.map(user => ({
+        //     receiver_id: user.buyer_id,
+        //     sender_id: requester_id,
+        //     type: "company_request",
+        //     message_id: messageReponse.id,
+        //     isRead: false,
+        //     company_req_id: requestData.id
 
-        }))
+        // }))
+
+        let notifications = [];
+        if (filteredUsers.length > 0) {
+            notifications = filteredUsers.map(user => ({
+                receiver_id: user.buyer_id,
+                sender_id: requester_id,
+                type: "company_request",
+                message_id: messageResponse.id,
+                isRead: false,
+                company_req_id: requestData.id
+            }));
+        } else {
+            // No other user hold this company in portfolio → notify company creator
+            const company = await db.company.findByPk(company_id);
+            if (company && company.created_by !== requester_id) {
+                notifications.push({
+                    receiver_id: company.created_by,
+                    sender_id: requester_id,
+                    type: "company_request",
+                    message_id: messageResponse.id,
+                    isRead: false,
+                    company_req_id: requestData.id
+                });
+            }
+        }
+
         console.log("notifications -------> ", notifications);
 
         const fullRequestData = await db.companyRequest.findOne({
@@ -165,6 +185,11 @@ export const CompanyReq = async (req, res) => {
                 {
                     model: db.appUser,
                     as: 'requesterInfo', // use correct alias if defined in associations
+                    attributes: ['id', 'role', 'email']
+                },
+                {
+                    model: db.appUser,
+                    as: 'approverInfo', // use correct alias if defined in associations
                     attributes: ['id', 'role', 'email']
                 },
                 {
@@ -184,14 +209,13 @@ export const CompanyReq = async (req, res) => {
                 console.log("users --> ", users);
                 // console.log("user", user);
 
-
-                const targetSocketId = users[user.user_id]; // from socketHandler
+                const targetSocketId = users[user.buyer_id]; // from socketHandler
                 console.log("targetSocketId --> ", targetSocketId);
 
                 if (targetSocketId) {
                     io.to(targetSocketId).emit('company_request_notification', {
                         type: 'company_request',
-                        from: user_id,
+                        from: requester_id,
                         data: fullRequestData // send full request data
                     });
                 }
@@ -199,34 +223,52 @@ export const CompanyReq = async (req, res) => {
 
         }
 
-        return Created(res, requestData, "Company Request Created")
+        return Created(res, fullRequestData, "Company Request Created")
     } catch (error) {
         console.log(error);
         return ServerError(res, 'Internal Server Error', error)
     }
 }
 
+
+export const getAllCompanyRequest = async (req, res) => {
+    try {
+        // const userId=req.user.id
+        const userId = 1
+        const reponseData = await db.companyRequest.findAll();
+        const incomingReq = reponseData.filter((req) => req.user_id != userId);
+        const outgoingReq = reponseData.filter((req) => req.user_id === userId)
+        const pendingReq = reponseData.filter((req) => req.user_id === userId && req.accept_req === null)
+        return Success(res, { incomingReq, outgoingReq, pendingReq }, "Compnay Reques List");
+    } catch (error) {
+        console.log(error);
+        return ServerError(res, 'Internal Server Error', error);
+    }
+}
+
+
 export const AcceptCompanyRequest = async (req, res) => {
     try {
-        const { company_req_id, expressed_interest, notification_id } = req.body;
-        const receiver_id = req.user.id;
-
+        const { company_req_id, accept_req, notification_id } = req.body;
+        const receiver_id = 1;
+        // const receiver_id = req.user.id;
         const request = await db.companyRequest.findByPk(company_req_id);
         if (!request) {
             return NotFound(res, "Company request not found");
         }
 
-        const sender_id = request.user_id;
+        const sender_id = request.requester_id;
 
-        if (expressed_interest === true) {
+        if (accept_req === true) {
             // Step 1: Update request status
             await db.companyRequest.update(
-                { expressed_interest },
+                { accept_req },
                 { where: { id: company_req_id } }
             );
 
+            // await db.notification.update({ isRead: true }, { where: { id: notification_id } })
             // Step 2: Remove the notification
-            await db.notification.destroy({ where: { id: notification_id } });
+            // await db.notification.destroy({ where: { id: notification_id } });
 
             // Step 3: Update the initial message with receiver_id
             await db.messages.update(
@@ -245,6 +287,7 @@ export const AcceptCompanyRequest = async (req, res) => {
             const receiverSocket = getUserSocket(receiver_id);
 
             const roomId = `room_${company_req_id}`; // Unique room ID based on request
+            console.log("roomId", roomId);
 
             const payload = {
                 roomId,
@@ -253,6 +296,9 @@ export const AcceptCompanyRequest = async (req, res) => {
                 receiverId: receiver_id,
                 message: "Chat room created"
             };
+            console.log("Socket Payload ---> ", payload);
+            console.log("senderSocket -->", senderSocket);
+            console.log("receiverSocket -->", receiverSocket);
 
             if (senderSocket) {
                 io.to(senderSocket).emit("chat_room_created", payload);
@@ -262,12 +308,12 @@ export const AcceptCompanyRequest = async (req, res) => {
                 io.to(receiverSocket).emit("chat_room_created", payload);
             }
 
-            return Ok(res, "Request accepted and chat enabled");
+            return Success(res, "Request accepted and chat enabled");
         } else {
             // Declined: remove the request
-            await db.companyRequest.destroy({ where: { id: company_req_id } });
+            // await db.companyRequest.destroy({ where: { id: company_req_id } });
 
-            return Ok(res, "Request declined and removed");
+            return Success(res, "Request declined and removed");
         }
 
     } catch (error) {

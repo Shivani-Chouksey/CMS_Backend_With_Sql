@@ -102,11 +102,18 @@ export const DbConnection = async () => {
         db.notification.belongsTo(db.messages, { foreignKey: 'message_id', as: "messageFromSendor" })
         db.notification.belongsTo(db.appUser, { foreignKey: 'sender_id', as: "senderInfo" })
         db.notification.belongsTo(db.companyRequest, { foreignKey: 'company_req_id', as: "CompanyReqInfo" })
+        db.notification.belongsTo(db.companyRequest, { foreignKey: "company_req_id" });
 
         //companyReq and user relation
-        db.companyRequest.belongsTo(db.appUser, { foreignKey: "user_id", as: "requesterInfo" });
-        db.companyRequest.belongsTo(db.company, { foreignKey: "company_id", as: "companyInfo" });
-        db.notification.belongsTo(db.companyRequest, { foreignKey: "company_req_id" });
+        // db.companyRequest.belongsTo(db.appUser, { foreignKey: "requester_id", as: "requesterInfo" });
+        // db.companyRequest.belongsTo(db.appUser, { foreignKey: "approver_id", as: "approverInfo" });
+        // db.companyRequest.belongsTo(db.company, { foreignKey: "company_id", as: "companyInfo" });
+
+        db.companyRequest.belongsTo(db.appUser, { as: 'requesterInfo', foreignKey: 'requester_id' });
+        db.companyRequest.belongsTo(db.appUser, { as: 'approverInfo', foreignKey: 'approver_id' });
+        db.companyRequest.belongsTo(db.cmsUser, { as: 'aiOfficerInfo', foreignKey: 'ai_officer_id' });
+        db.companyRequest.belongsTo(db.cmsUser, { as: 'assignedByInfo', foreignKey: 'ai_officer_assigned_by' });
+        db.companyRequest.belongsTo(db.company, { as: 'companyInfo', foreignKey: 'company_id' });
 
         await sequelize.sync({ force: false });
         console.log("Database Connected Successfully");

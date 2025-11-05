@@ -1,5 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
+import cors from 'cors'
 import All_API_Routes from './routes/index.js';
 import { db, DbConnection } from './config/db-connection.js';
 import morgan from 'morgan';
@@ -12,9 +13,30 @@ import { createServer } from 'node:http';
 // import scoketHandler from './utils/socket.js';
 import SocketHandler from './utils/socketHandler.js';
 
+
 const app = express();
 const server = createServer(app);
-const io = new Server(server, { cors: "*" });
+// const io = new Server(server, { cors: "*" });
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://qxz5cv02-5000.inc1.devtunnels.ms',
+  'http://localhost:5000'
+];
+
+const io = new Server(server, { 
+ cors: {
+     origin: allowedOrigins,
+     methods: ['GET', 'POST'],
+     credentials: true
+   }
+ });
+
+ app.use(cors({
+   origin: allowedOrigins,
+   methods: ['GET', 'POST','OPTIONS'],
+   credentials: true
+ }));
 app.use(express.json());
 
 // ensure log directory exists

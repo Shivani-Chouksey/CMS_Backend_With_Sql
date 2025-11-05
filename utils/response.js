@@ -15,7 +15,7 @@ function Conflict_Reponse(res, message, statusCode = 409) {
 
 function sendResponse(res, { statusCode = 200, message = '', data = undefined, error = undefined }) {
     const response = {
-        success: statusCode >= 200 && statusCode < 300, message
+        success: statusCode >= 200 && statusCode < 300, message,statusCode
     }
     // only add data if provided
     if (data != undefined && data !== null) {

@@ -3,7 +3,7 @@ import { DataTypes } from "sequelize";
 // models/UserCompany.js
 export const UserCompanyTransaction = (sequelize) => {
   return sequelize.define("user_company_transaction", {
-    user_id: {
+    seller_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -19,7 +19,34 @@ export const UserCompanyTransaction = (sequelize) => {
         key: "id"
       },
     },
-    approver_id: {
+    company_req_id: {
+      type: DataTypes.INTEGER,
+      // allowNull: false,
+      references: {
+        model: "company_request",
+        key: "id"
+      },
+    },
+    buyer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "app_user",
+        key: "id"
+      },
+    },
+    review_message: {
+      type: DataTypes.TEXT,
+    },
+    price: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    quantity: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ai_officer_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -27,9 +54,6 @@ export const UserCompanyTransaction = (sequelize) => {
         key: "id"
       },
     },
-    review_message:{
-        type:DataTypes.TEXT,
-    }
   }, {
     timestamps: true,
     freezeTableName: true
