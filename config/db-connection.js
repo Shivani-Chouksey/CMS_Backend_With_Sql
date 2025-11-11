@@ -16,6 +16,7 @@ import { Messages } from "../models/message.model.js";
 import { Notification } from "../models/notification.model.js";
 import { CompanyRequest } from "../models/company-request.model.js";
 import { UserCompanyTransaction } from "../models/transaction.model.js";
+import { PortfolioModel } from "../models/portfolio.model.js";
 // export const sequelize = new Sequelize(process.env.SQL_URI,{dialect:"mysql"})
 const host = process.env.DB_HOST
 const user = process.env.DB_USER
@@ -53,7 +54,7 @@ export const DbConnection = async () => {
         db.notification = Notification(sequelize);
         db.companyRequest = CompanyRequest(sequelize);
         db.userCompanyTransaction = UserCompanyTransaction(sequelize);
-
+        db.portFolio = PortfolioModel(sequelize)
 
         // Assosications - Table Relations
         // db.cmsUser.hasMany(db.news, { foreignKey: 'created_user_id' });
@@ -114,6 +115,13 @@ export const DbConnection = async () => {
         db.companyRequest.belongsTo(db.cmsUser, { as: 'aiOfficerInfo', foreignKey: 'ai_officer_id' });
         db.companyRequest.belongsTo(db.cmsUser, { as: 'assignedByInfo', foreignKey: 'ai_officer_assigned_by' });
         db.companyRequest.belongsTo(db.company, { as: 'companyInfo', foreignKey: 'company_id' });
+        // db.companyRequest.belongsTo(db.messages, { as: 'messageInfo', foreignKey: 'message_id' });
+
+        // user --> company portfolio
+        db.appUser.hasMany(db.portFolio, { as: 'portfolios', foreignKey: 'user_id' });
+        db.company.hasMany(db.portFolio, { as: 'portfolios', foreignKey: 'company_id' });
+        db.portFolio.belongsTo(db.appUser, { as: 'user_info', foreignKey: 'user_id' });
+        db.portFolio.belongsTo(db.company, { as: 'user_companyInfo', foreignKey: 'company_id' });
 
         await sequelize.sync({ force: false });
         console.log("Database Connected Successfully");

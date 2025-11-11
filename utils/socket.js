@@ -40,33 +40,89 @@ function scoketHandler(io) {
 
         });
 
-        // 📩 Handle incoming message
-        socket.on('send_message', async (data) => {
-            try {
-                const { receiver_id, message } = data;
-                const targetSocketId = users[receiver_id];
-                console.log("Target Socket ID:", targetSocketId);
+        // // 📩 Handle incoming message
+        // socket.on('send_message', async (data) => {
+        //     try {
+        //         const { receiver_id, message } = data;
+        //         const targetSocketId = users[receiver_id];
+        //         console.log("Target Socket ID:", targetSocketId);
 
-                // ✅save message to db
-                const currentMessage = await db.messages.create({ sender_id: socket.userId, receiver_id, content: message });
+        //         // ✅save message to db
+        //         const currentMessage = await db.messages.create({ sender_id: socket.userId, receiver_id, content: message });
 
-                if (targetSocketId) {
-                    // ✅ User is online — send message directly
-                    io.to(targetSocketId).emit('new_message', {
-                        from: socket.userId,
-                        message
-                    });
-                } else {
-                    // ❌ User is offline — store notification
-                    console.log(`User ${receiver_id} not connected`);
-                    await db.notification.create({ receiver_id, message_id: currentMessage.id, type: 'new_message', sender_id: socket.userId })
-                }
-            } catch (error) {
-                console.error("Error in send_message:", error);
-            }
-        });
+        //         if (targetSocketId) {
+        //             // ✅ User is online — send message directly
+        //             io.to(targetSocketId).emit('new_message', {
+        //                 from: socket.userId,
+        //                 message
+        //             });
+        //         } else {
+        //             // ❌ User is offline — store notification
+        //             console.log(`User ${receiver_id} not connected`);
+        //             await db.notification.create({ receiver_id, message_id: currentMessage.id, type: 'new_message', sender_id: socket.userId })
+        //         }
+        //     } catch (error) {
+        //         console.error("Error in send_message:", error);
+        //     }
+        // });
+
+        // socket.on('send_message', async (data) => {
+        //     console.log('send_message data',data);
+            
+        //     // try {
+        //     //     const { roomId, content } = data;
+        //     //     const sender_id = socket.userId;
+        //     //     console.log(" socket.userId ----------- >", {
+        //     //         room_id: roomId,
+        //     //         sender_id,
+        //     //         content,
+        //     //     });
+        //     //     if (!roomId || !content) {
+        //     //         console.warn('Missing roomId or message');
+        //     //         return;
+        //     //     }
 
 
+        //     //     const companyReqId = roomId.replace('req_', '');
+        //     //     // ✅ Save message to DB
+        //     //     const currentMessage = await db.messages.create({
+        //     //         request_id: companyReqId,
+        //     //         room_id: roomId,
+        //     //         sender_id,
+        //     //         content,
+        //     //     });
+
+        //     //     const messagePayload = {
+        //     //         request_id: companyReqId,
+        //     //         room_id: roomId,
+        //     //         from: sender_id,
+        //     //         content,
+        //     //         timestamp: currentMessage.createdAt,
+        //     //         message_id: currentMessage.id,
+        //     //     };
+
+        //     //     // ✅ Emit to all users in the room
+        //     //     socket.to(roomId).emit('new_message', messagePayload);
+
+        //     //     // ✅ Optionally: notify offline users
+        //     //     const roomParticipants = await getRoomParticipants(roomId); // Custom function
+        //     //     for (const userId of roomParticipants) {
+        //     //         const targetSocketId = users[userId];
+        //     //         if (!targetSocketId) {
+        //     //             await db.notification.create({
+        //     //                 receiver_id: userId,
+        //     //                 sender_id,
+        //     //                 message_id: currentMessage.id,
+        //     //                 type: 'new_message',
+        //     //                 status: 'pending',
+        //     //                 isRead: false,
+        //     //             });
+        //     //         }
+        //     //     }
+        //     // } catch (error) {
+        //     //     console.error('Error in send_message:', error);
+        //     // }
+        // });
         // Read Notification
         socket.on('mark_as_read', async ({ notificationIds }) => {
             // console.log('notificationIds',notificationIds);

@@ -1,3 +1,4 @@
+import { Op } from "sequelize"
 import { db } from "../config/db-connection.js"
 import { RemoveFile } from "../utils/helpers.js"
 import { Conflict, Created, NotFound, ServerError, Success } from "../utils/response.js"
@@ -29,8 +30,8 @@ export const GetCompanyList = async (req, res) => {
         let { limit, page } = req.query;
 
         // Convert to numbers if present
-        limit = limit ? parseInt(limit) : null;
-        page = page ? parseInt(page) : null;
+        limit = limit ? parseInt(limit) : 10;
+        page = page ? parseInt(page) : 1;
 
         let queryOptions = {
             include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }]
@@ -52,7 +53,9 @@ export const GetCompanyList = async (req, res) => {
                 totalPages: Math.ceil(totalRecordCount / limit)
             }
             : null;
-        return Success(res, { data: responseData, pagination }, "All Company List")
+        console.log(responseData);
+
+        return Success(res, { companies: responseData, pagination }, "All Company List")
     } catch (error) {
         console.log('GetCompanyList-->', error);
         if (error.name === 'SequelizeEagerLoadingError') {
@@ -122,10 +125,17 @@ export const DeleteCompany = async (req, res) => {
 
 export const CompanyReq = async (req, res) => {
     try {
-        console.log("req data --->", req.body);
-        const { requester_id, expressed_interest, message, company_id } = req.body
-        const requestData = await db.companyRequest.create(req.body);
+        const requester_id = req.user.id
 
+        console.log("req data --->", req.body);
+        const { expressed_interest, message, company_id } = req.body
+        // Step 3: Get all users in the company except the requester
+        const userList = await db.portFolio.findAll({ where: { company_id } });
+        console.log("userList userCompanyTransaction---------> ", userList);
+        const receviers_ids = userList.map(user => user.user_id);
+        console.log("receviers_ids--->", receviers_ids);
+
+        const requestData = await db.companyRequest.create({ ...req.body, requester_id, receviers_ids });
         // Step 2: Store the initial message
         const messageResponse = await db.messages.create({
             sender_id: requester_id,
@@ -134,13 +144,10 @@ export const CompanyReq = async (req, res) => {
             content: message
         });
 
-        // Step 3: Get all users in the company except the requester
-        const userList = await db.userCompanyTransaction.findAll({ where: { company_id } });
-        console.log("userList userCompanyTransaction---------> ", userList);
 
         // Filter out the user who made the request
-        const filteredUsers = userList.filter(user => user.buyer_id !== requester_id);
-        console.log("filteredUsers ----------->", filteredUsers);
+        // const filteredUsers = userList.filter(user => user.buyer_id !== requester_id);
+        // console.log("filteredUsers ----------->", filteredUsers);
 
         // const notifications = filteredUsers.map(user => ({
         //     receiver_id: user.buyer_id,
@@ -152,16 +159,21 @@ export const CompanyReq = async (req, res) => {
 
         // }))
 
+
+
         let notifications = [];
-        if (filteredUsers.length > 0) {
-            notifications = filteredUsers.map(user => ({
-                receiver_id: user.buyer_id,
-                sender_id: requester_id,
-                type: "company_request",
-                message_id: messageResponse.id,
-                isRead: false,
-                company_req_id: requestData.id
-            }));
+        if (userList.length > 0) {
+            notifications = userList.map(user => (
+
+                {
+                    receiver_id: user.user_id,
+                    sender_id: requester_id,
+                    type: "company_request",
+                    message_id: messageResponse.id,
+                    isRead: false,
+                    company_req_id: requestData.id
+                }
+            ));
         } else {
             // No other user hold this company in portfolio → notify company creator
             const company = await db.company.findByPk(company_id);
@@ -204,12 +216,12 @@ export const CompanyReq = async (req, res) => {
             await db.notification.bulkCreate(notifications);
             const io = getSocketInstance();
 
-            filteredUsers.forEach(user => {
+            userList.forEach(user => {
                 const users = getAllUserSockets()
                 console.log("users --> ", users);
                 // console.log("user", user);
 
-                const targetSocketId = users[user.buyer_id]; // from socketHandler
+                const targetSocketId = users[user.user_id]; // from socketHandler
                 console.log("targetSocketId --> ", targetSocketId);
 
                 if (targetSocketId) {
@@ -233,18 +245,59 @@ export const CompanyReq = async (req, res) => {
 
 export const getAllCompanyRequest = async (req, res) => {
     try {
-        // const userId=req.user.id
-        const userId = 1
-        const reponseData = await db.companyRequest.findAll();
-        const incomingReq = reponseData.filter((req) => req.user_id != userId);
-        const outgoingReq = reponseData.filter((req) => req.user_id === userId)
-        const pendingReq = reponseData.filter((req) => req.user_id === userId && req.accept_req === null)
-        return Success(res, { incomingReq, outgoingReq, pendingReq }, "Compnay Reques List");
+        const userId = req.user.id;
+
+        const allRequests = await db.companyRequest.findAll({
+            where: {
+                [Op.or]: [
+                    { requester_id: userId },
+                    { approver_id: userId }
+                ]
+            },
+            include: [
+                {
+                    model: db.appUser,
+                    as: 'requesterInfo',
+                    attributes: ['id', 'role', 'email']
+                },
+                {
+                    model: db.appUser,
+                    as: 'approverInfo',
+                    attributes: ['id', 'role', 'email']
+                },
+                {
+                    model: db.company,
+                    as: 'companyInfo',
+                    attributes: ['id', 'name', 'logo_path', 'content']
+                }
+            ]
+        });
+        // const incomingReq = await db.notification.findAll({ where: { receiver_id: userId } })
+        // 🔹 Filter requests
+
+        const incomingReq = allRequests.filter(req => {
+            const receivers = req.receivers_ids || [];
+            return receivers.includes(userId);
+        });
+
+        const outgoingReq = allRequests.filter(req => req.requester_id === userId && (req.accept_req === true || req.accept_req === false));
+
+        const pendingReq = allRequests.filter(req => {
+            const receivers = req.receivers_ids || [];
+            return (req.requester_id === userId || receivers.includes(userId)) && req.accept_req === null;
+        });
+
+
+        return Success(res, {
+            incomingReq,
+            outgoingReq,
+            pendingReq
+        }, "Company Request List");
     } catch (error) {
-        console.log(error);
+        console.error("Error in getAllCompanyRequest:", error);
         return ServerError(res, 'Internal Server Error', error);
     }
-}
+};
 
 
 export const AcceptCompanyRequest = async (req, res) => {

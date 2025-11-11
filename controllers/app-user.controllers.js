@@ -207,7 +207,139 @@ export const CreateAppUser = async (req, res) => {
     }
 };
 
+export const RegisterAppUser = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    try {
+        const { role, user, company_detail, email, is_active } = req.body; const createdBy = req.user?.id;
 
+        console.log("CreateAppUser files -->", req.files);
+
+        // 1. Create base appUser first
+        const appUser = await db.appUser.create(
+            { role, created_by_id: createdBy, is_active, email },
+            { transaction }
+        );
+
+        let responseMessage = "";
+
+        // 2. Role-wise branching
+        if (role === "legal_entity") {
+            console.log("Inside legal_entity creation flow");
+
+            // Company Details
+            const companyDetailObj = {
+                company_name: company_detail.company_name,
+                email,
+                company_incorporation_date: company_detail.company_incorporation_date,
+                company_Id_number: company_detail.company_Id_number,
+                address: company_detail.address,
+                profile_image: req.files?.profile_image?.[0]?.path,
+                app_user_id: appUser.id,
+            };
+
+            const legalEntity = await db.legalEntity.create(companyDetailObj, { transaction });
+
+            // Company Representative
+            const rep = company_detail.company_Representative;
+            const repObj = {
+                name: rep.name,
+                email,
+                mobile_number: rep.mobile_number,
+                app_user_id: appUser.id,
+                legal_entity_id: legalEntity.id,
+            };
+            const companyRep = await db.companyRepresentative.create(repObj, { transaction });
+
+            // Address Proof
+            if (rep.address_proof) {
+                await db.addressProof.create(
+                    {
+                        ...rep.address_proof,
+                        card_image: req.files?.address_proof?.[0]?.path,
+                        company_representative_id: companyRep.id,
+                        legal_entity_id: legalEntity.id,
+                        app_user_id: appUser.id,
+                    },
+                    { transaction }
+                );
+            }
+
+            // Identity Proof
+            if (rep.identity_proof) {
+                await db.identityProof.create(
+                    {
+                        ...rep.identity_proof,
+                        id_image: req.files?.identity_proof?.[0]?.path,
+                        company_representative_id: companyRep.id,
+                        legal_entity_id: legalEntity.id,
+                        app_user_id: appUser.id,
+                    },
+                    { transaction }
+                );
+            }
+
+            responseMessage = "App User Created for Role: legal_entity";
+
+        } else if (["investor", "advisor"].includes(role)) {
+            console.log(`Inside ${role} creation flow`);
+
+            const userDetailObj = {
+                name: user.name,
+                email,
+                mobile_number: user.mobile_number,
+                address: user.address,
+                access_group: user.access_group,
+                app_user_id: appUser.id,
+                profile_image: req.files?.profile_image?.[0]?.path,
+            };
+
+            const investorAdvisor = await db.investorAndAdvisor.create(userDetailObj, { transaction });
+
+            // Address Proof
+            if (user.address_proof) {
+                await db.addressProof.create(
+                    {
+                        ...user.address_proof,
+                        card_image: req.files?.address_proof?.[0]?.path,
+                        investor_advisor_id: investorAdvisor.id,
+                        app_user_id: appUser.id,
+                    },
+                    { transaction }
+                );
+            }
+
+            // Identity Proof
+            if (user.identity_proof) {
+                await db.identityProof.create(
+                    {
+                        ...user.identity_proof,
+                        id_image: req.files?.identity_proof?.[0]?.path,
+                        investor_advisor_id: investorAdvisor.id,
+                        app_user_id: appUser.id,
+                    },
+                    { transaction }
+                );
+            }
+
+            responseMessage = `App User Created for Role: ${role}`;
+
+        } else {
+            throw new Error(`Invalid role: ${role}`);
+        }
+
+        await transaction.commit();
+        return Created(res, null, responseMessage);
+    } catch (error) {
+        console.log("CreateAppUser Error", error.name);
+
+        await transaction.rollback();
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+            const messages = error.errors.map(err => err.message);
+            return ServerError(res, "Internal Server Error", messages);
+        }
+        return ServerError(res, "Internal Server Error", error.message || error);
+    }
+};
 
 export const GetAllAppUser = async (req, res) => {
     try {
@@ -277,7 +409,7 @@ export const AppUserLogin = async (req, res) => {
         console.log("isUserExist", isUserExist);
 
         if (!isUserExist || isUserExist == undefined || isUserExist == null) {
-            return NotFound(res, "User Not Found",null,404)
+            return Unauthorized(res, "User Not Found")
         }
         // generate random 6-digit OTP
         const random_otp = generateFourDigitOTP()
@@ -294,7 +426,7 @@ export const AppUserLogin = async (req, res) => {
         isUserExist.otp = random_otp;
         isUserExist.otp_expiry_time = otp_expiry_time;
         await isUserExist.save();
-        return Success(res, '"OTP Sent Successfully on Registered Email" ')
+        return Success(res, `OTP Sent Successfully on Registered Email  ${random_otp}`)
     } catch (error) {
         return ServerError(res, 'Internal Server Error', error)
 
@@ -409,3 +541,6 @@ export const UpdateAppUser = async (req, res) => {
         return ServerError(res, 'Internal Server error', error.message)
     }
 }
+
+
+

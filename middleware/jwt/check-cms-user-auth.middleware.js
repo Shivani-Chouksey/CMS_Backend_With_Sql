@@ -7,14 +7,14 @@ export const Is_Super_Admin = async (req, res, next) => {
         const token = req.headers.authorization.replace('Bearer', '').trim()
         // console.log("Is_Super_Admin Middleware token --->", token);
         if (!token || token == undefined) {
-          return  Unauthorized(res,'Token Not Exists')
+            return Unauthorized(res, 'Token Not Exists')
             // return res.status(401).json({ Success: false, message: "Token Not Exists " });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
         console.log('IsVerified', IsVerified);
         if (!IsVerified) {
-          return  Unauthorized(res,'UnAutheried Access')
+            return Unauthorized(res, 'UnAutheried Access')
 
             // return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
@@ -25,8 +25,8 @@ export const Is_Super_Admin = async (req, res, next) => {
 
         const IsSuperAdmin = CmsUser?.role === 'super-admin'
 
-        if (!CmsUser|| !IsSuperAdmin) {
-              return  Unauthorized(res,'UnAutheried  Access')
+        if (!CmsUser || !IsSuperAdmin) {
+            return Unauthorized(res, 'UnAutheried  Access')
             // return res.status(401).json({ Success: false, message: "UnAutheried Super-Admin Access", });
         }
         req.IsAdminRole = IsVerified.role
@@ -44,17 +44,17 @@ export const Is_Logged_In = async (req, res, next) => {
         const token = req.headers.authorization.replace('Bearer', '').trim()
         console.log("Is_Logged_In Middleware token --->", token);
         if (!token || token == undefined) {
-            return Unauthorized(res,'Token Not Exists')
+            return Unauthorized(res, 'Token Not Exists')
             // return res.status(401).json({ Success: false, message: "Token Not Exists" });
 
         }
         const IsVerified = await jwt.verify(token, process.env.JWT_SECRET);
         console.log('IsVerified', IsVerified);
-        if (!IsVerified) {
-            return Unauthorized(res,'UnAutheried Access')
-            // return res.status(401).json({ Success: false, message: "UnAutheried Access" });
+        // if (!IsVerified) {
+        //     return Unauthorized(res,'UnAutheried Access')
+        //     // return res.status(401).json({ Success: false, message: "UnAutheried Access" });
 
-        }
+        // }
 
         // const { dataValues } = await db.appUser.findOne({ where: { id: IsVerified?.id } });
         // console.log("FoundUser", dataValues);
@@ -66,7 +66,14 @@ export const Is_Logged_In = async (req, res, next) => {
         req.user = IsVerified
         next()
     } catch (error) {
-        return ServerError(res, 'Internal Server Error', error)
+        if (error.name === 'TokenExpiredError') {
+            return Unauthorized(res, 'Token expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            return Unauthorized(res, 'Invalid token');
+        } else {
+            return ServerError(res, 'Internal Server Error', error);
+        }
+
         // return res.status(500).json({ Success: false, message: "Internal Server Error", error: error });
     }
 }

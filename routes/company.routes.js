@@ -1,6 +1,6 @@
 import express from 'express'
 import { AcceptCompanyRequest, CompanyReq, CreateCompany, DeleteCompany, getAllCompanyRequest, GetCompanyDetail, GetCompanyList, UpdateCompanyDetail } from '../controllers/company.controllers.js';
-import { Is_Super_Admin } from '../middleware/jwt/check-cms-user-auth.middleware.js';
+import { Is_Logged_In, Is_Super_Admin } from '../middleware/jwt/check-cms-user-auth.middleware.js';
 import { createUpload } from '../middleware/multer.middleware.js';
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.patch("/update/:id", Is_Super_Admin, createUpload("company", {
 
 
 
-router.post("/req",CompanyReq);
+router.post("/req",Is_Logged_In,CompanyReq);
 router.post("/accept-request",AcceptCompanyRequest )
-router.get('/req-list',getAllCompanyRequest)
+router.get('/req-list',Is_Logged_In,getAllCompanyRequest)
 export default router 

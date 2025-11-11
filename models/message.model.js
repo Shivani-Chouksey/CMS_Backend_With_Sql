@@ -9,12 +9,16 @@ function Messages(sequelize) {
         },
         receiver_id: {
             type: DataTypes.INTEGER,
-            require: true,
+            // require: true,
             // allowNull: false
         },
         request_id: {
             type: DataTypes.INTEGER,
             allowNull: false // links message to a specific company request
+        },
+        room_id: {
+            type: DataTypes.STRING,
+            // allowNull: false
         },
         content: {
             type: DataTypes.STRING,
