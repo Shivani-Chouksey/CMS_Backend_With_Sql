@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { db } from "../config/db-connection.js";
 import jwt from 'jsonwebtoken';
+import { CompanyReq } from "../controllers/company.controllers.js";
 
 
 // socketStore.js
@@ -9,12 +10,12 @@ export const users = {}; // userId -> socketId
 // utils/socketStore.js or inside SocketHandler file
 export const getRoomParticipants = async (roomId) => {
     const companyReqId = roomId.replace('req_', '');
-    console.log("parseInt(companyReqId)",parseInt(companyReqId),companyReqId);
-    
+    console.log("parseInt(companyReqId)", parseInt(companyReqId), companyReqId);
+
     const participants = await db.companyRequest.findAll({
-        where: { id:parseInt(companyReqId) }
+        where: { id: parseInt(companyReqId) }
     });
-// console.log("participants",participants);
+    // console.log("participants",participants);
 
     if (!participants || participants.length === 0) return [];
 
@@ -91,6 +92,8 @@ function SocketHandler(io) {
             // const pendingNotifications = await db.notification.findAll({
             //     where: { receiver_id: userId, isRead: false, status: 'pending' }
             // });
+            console.log("pendingNotifications------>", pendingNotifications.length);
+
             if (pendingNotifications.length > 0) {
                 socket.emit('pending_notifications', pendingNotifications);
             }
@@ -116,18 +119,25 @@ function SocketHandler(io) {
             notif.status = 'accepted';
             notif.isRead = true;
             await notif.save();
-
-            // Update companyRequest status
-            const companyReq = await db.companyRequest.findByPk(notif.company_req_id);
-            if (companyReq) {
-                companyReq.status = 'chat_active';
-                companyReq.approver_id = '1'
-                await companyReq.save();
-            }
-
             // Create chat room
             const roomId = `req_${notif.company_req_id}`;
-            console.log("roomId", roomId);
+            console.log("roomId", roomId, notif.sender_id);
+            // Update companyRequest status
+            const companyReq = await db.companyRequest.findByPk(notif.company_req_id);
+            console.log(' companyReq.room_id = roomId;', companyReq.room_id = roomId);
+            
+            if (companyReq) {
+                companyReq.status = 'chat_active';
+                companyReq.accept_req = true;
+                companyReq.approver_id = userId;
+                companyReq.room_id = `req_${notif.company_req_id}`;
+                companyReq.chat_note_accept_status = chat_note_accept_status;
+                await companyReq.save();
+            }
+            const companyReq2 = await db.companyRequest.findByPk(notif.company_req_id);
+            console.log("companyReq2", companyReq2);
+
+
 
             socket.join(roomId);
 
@@ -139,10 +149,13 @@ function SocketHandler(io) {
                 where: { request_id: notif.company_req_id },
                 order: [['createdAt', 'ASC']]
             });
+            console.log("initialMessage--->", initialMessage);
+
             initialMessage.receiver_id = notif.receiver_id;
             initialMessage.room_id = roomId
             initialMessage.save();
             const chatStartPayload = {
+                company_req_id,
                 roomId,
                 by: notif.receiver_id,
                 initialMessage: {
@@ -164,7 +177,8 @@ function SocketHandler(io) {
                     type: 'chat_started',
                     company_req_id: notif.company_req_id,
                     status: 'pending',
-                    isRead: false
+                    isRead: false,
+                    message_id: initialMessage.id
                 });
             }
 
@@ -172,7 +186,7 @@ function SocketHandler(io) {
             socket.emit('chat_started', chatStartPayload);
         });
 
-        socket.on('joined_room', ({ roomId }) => {
+        socket.on('joined_room', (roomId) => {
             console.log(`Socket ${socket.id} joined room ${roomId}`);
             socket.join(roomId);
 
@@ -239,12 +253,12 @@ function SocketHandler(io) {
 
                 // ✅ Optionally: notify offline users
                 const roomParticipants = await getRoomParticipants(roomId); // Custom function
-                console.log("roomParticipants",roomParticipants);
-                
+                console.log("roomParticipants", roomParticipants);
+
                 for (const userId of roomParticipants) {
                     const targetSocketId = users[userId];
-                    console.log("targetSocketId",targetSocketId);
-                    
+                    console.log("targetSocketId", targetSocketId);
+
                     if (!targetSocketId) {
                         await db.notification.create({
                             receiver_id: userId,
@@ -255,7 +269,7 @@ function SocketHandler(io) {
                             isRead: false,
                         });
                     }
-                    
+
                 }
             } catch (error) {
                 console.error('Error in send_message:', error);

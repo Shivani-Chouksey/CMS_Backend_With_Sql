@@ -20,7 +20,13 @@ export const CompanyRequest = (sequelize) => {
       }
     },
     ai_officer_req_status: {
-      type: DataTypes.ENUM("pending", "accepted", "declined"),
+      type: DataTypes.ENUM("pending", "accepted", "rejected"),
+      // allowNull: false,
+      defaultValue: "pending",
+
+    },
+    ai_officer_req_approval_status: {
+      type: DataTypes.ENUM("pending", "accepted", "rejected"),
       // allowNull: false,
       defaultValue: "pending",
 
@@ -44,8 +50,8 @@ export const CompanyRequest = (sequelize) => {
     ai_officer_assigned_at: {
       type: DataTypes.DATE,
     },
-    receviers_ids:{
-      type:DataTypes.JSONB
+    receviers_ids: {
+      type: DataTypes.JSONB
     },
     requester_id: {
       type: DataTypes.INTEGER,
@@ -62,7 +68,7 @@ export const CompanyRequest = (sequelize) => {
       references: {
         model: 'app_user',
         key: 'id',
-        
+
       },
       comment: "User who accepts or declines the request"
     },
@@ -70,6 +76,7 @@ export const CompanyRequest = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    room_id: { type: DataTypes.STRING },
     message: {
       type: DataTypes.TEXT,
     },
@@ -86,7 +93,7 @@ export const CompanyRequest = (sequelize) => {
       default: false
     },
     status: {
-      type: DataTypes.ENUM( 'active', 'chat_active', 'closed', 'rejected', 'expired'),
+      type: DataTypes.ENUM('active', 'chat_active', 'closed', 'rejected', 'expired'),
       defaultValue: 'active'
     }
 

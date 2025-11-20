@@ -1,5 +1,5 @@
 import { Op } from "sequelize"
-import { db } from "../config/db-connection.js"
+import { db, sequelize } from "../config/db-connection.js"
 import { RemoveFile } from "../utils/helpers.js"
 import { Conflict, Created, NotFound, ServerError, Success } from "../utils/response.js"
 import { getAllUserSockets, getSocketInstance, getUserSocket } from "../utils/socketHandler.js"
@@ -25,46 +25,107 @@ export const CreateCompany = async (req, res) => {
 }
 
 
+// export const GetCompanyList = async (req, res) => {
+//     try {
+//         let { limit, page } = req.query;
+
+//         // Convert to numbers if present
+//         limit = limit ? parseInt(limit) : 10;
+//         page = page ? parseInt(page) : 1;
+
+//         let queryOptions = {
+//             include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }]
+//         };
+
+//         if (limit && page) {
+//             const skip = (page - 1) * limit;
+//             queryOptions.limit = limit;
+//             queryOptions.offset = skip;
+//         }
+//         const responseData = await db.company.findAll(queryOptions);
+//         const totalRecordCount = await db.company.count();
+
+//         const pagination = limit && page
+//             ? {
+//                 page,
+//                 limit,
+//                 totalRecord: totalRecordCount,
+//                 totalPages: Math.ceil(totalRecordCount / limit)
+//             }
+//             : null;
+//         console.log(responseData);
+
+//         return Success(res, { companies: responseData, pagination }, "All Company List")
+//     } catch (error) {
+//         console.log('GetCompanyList-->', error);
+//         if (error.name === 'SequelizeEagerLoadingError') {
+//             return ServerError(res, 'Internal Server Error', error)
+//         }
+//         return ServerError(res, 'Internal Server Error', error)
+
+//     }
+// }
+
 export const GetCompanyList = async (req, res) => {
     try {
         let { limit, page } = req.query;
 
-        // Convert to numbers if present
         limit = limit ? parseInt(limit) : 10;
         page = page ? parseInt(page) : 1;
 
-        let queryOptions = {
-            include: [{ model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }]
-        };
+        const skip = (page - 1) * limit;
 
-        if (limit && page) {
-            const skip = (page - 1) * limit;
-            queryOptions.limit = limit;
-            queryOptions.offset = skip;
-        }
-        const responseData = await db.company.findAll(queryOptions);
+        // Fetch companies with related cmsUser
+        const companies = await db.company.findAll({
+            include: [
+                { model: db.cmsUser, as: "cms_user", attributes: ['id', 'username', 'role'] }
+            ],
+            limit,
+            offset: skip
+        });
+
+        // Get active request count for each company
+        const companyIds = companies.map(c => c.id);
+
+        const activeReqCounts = await db.companyRequest.findAll({
+            attributes: [
+                'company_id',
+                [sequelize.fn('COUNT', sequelize.col('company_id')), 'activeReqCount']
+            ],
+            where: {
+                company_id: companyIds,
+                status: 'active' // assuming you have a status column
+            },
+            group: ['company_id']
+        });
+
+        // Convert counts to a map for easy lookup
+        const countMap = {};
+        activeReqCounts.forEach(item => {
+            countMap[item.company_id] = item.get('activeReqCount');
+        });
+
+        // Attach activeReqCount to each company
+        const responseData = companies.map(company => ({
+            ...company.toJSON(),
+            activeReqCount: countMap[company.id] || 0
+        }));
+
         const totalRecordCount = await db.company.count();
 
-        const pagination = limit && page
-            ? {
-                page,
-                limit,
-                totalRecord: totalRecordCount,
-                totalPages: Math.ceil(totalRecordCount / limit)
-            }
-            : null;
-        console.log(responseData);
+        const pagination = {
+            page,
+            limit,
+            totalRecord: totalRecordCount,
+            totalPages: Math.ceil(totalRecordCount / limit)
+        };
 
-        return Success(res, { companies: responseData, pagination }, "All Company List")
+        return Success(res, { companies: responseData, pagination }, "All Company List");
     } catch (error) {
-        console.log('GetCompanyList-->', error);
-        if (error.name === 'SequelizeEagerLoadingError') {
-            return ServerError(res, 'Internal Server Error', error)
-        }
-        return ServerError(res, 'Internal Server Error', error)
-
+        console.error('GetCompanyList -->', error);
+        return ServerError(res, 'Internal Server Error', error);
     }
-}
+};
 
 export const GetCompanyDetail = async (req, res) => {
     try {
@@ -248,12 +309,12 @@ export const getAllCompanyRequest = async (req, res) => {
         const userId = req.user.id;
 
         const allRequests = await db.companyRequest.findAll({
-            where: {
-                [Op.or]: [
-                    { requester_id: userId },
-                    { approver_id: userId }
-                ]
-            },
+            // where: {
+            //     [Op.or]: [
+            //         { requester_id: userId },
+            //         { approver_id: userId }
+            //     ]
+            // },
             include: [
                 {
                     model: db.appUser,
@@ -277,13 +338,15 @@ export const getAllCompanyRequest = async (req, res) => {
 
         const incomingReq = allRequests.filter(req => {
             const receivers = req.receivers_ids || [];
-            return receivers.includes(userId);
+            const ids = JSON.parse(req.receviers_ids)
+            console.log("receivers-->", ids, typeof ids);
+            return ids && ids.includes(userId);
         });
 
-        const outgoingReq = allRequests.filter(req => req.requester_id === userId && (req.accept_req === true || req.accept_req === false));
+        const outgoingReq = allRequests.filter(req => req.requester_id === userId && (req.accept_req === true || req.accept_req === null || req.accept_req === false));
 
         const pendingReq = allRequests.filter(req => {
-            const receivers = req.receivers_ids || [];
+            const receivers = req.receviers_ids || [];
             return (req.requester_id === userId || receivers.includes(userId)) && req.accept_req === null;
         });
 
@@ -291,7 +354,7 @@ export const getAllCompanyRequest = async (req, res) => {
         return Success(res, {
             incomingReq,
             outgoingReq,
-            pendingReq
+            pendingReq,
         }, "Company Request List");
     } catch (error) {
         console.error("Error in getAllCompanyRequest:", error);

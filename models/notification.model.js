@@ -5,7 +5,6 @@ function Notification(sequelize) {
         receiver_id: {
             type: DataTypes.INTEGER,
             require: true,
-            allowNull: false
         },
         type: {
             type: DataTypes.ENUM(
@@ -16,6 +15,9 @@ function Notification(sequelize) {
                 'request_closed',
                 'request_expired',
                 'deal_completed',
+                "ai_officer_req_approval",
+                'ai_officer_req_rejected',
+                'ai_officer_req_intilaized',
                 // 'system_alert',
                 // 'portfolio_update',
                 // 'price_alert'
@@ -33,8 +35,7 @@ function Notification(sequelize) {
         },
         message_id: {
             type: DataTypes.INTEGER,
-            require: true,
-            allowNull: false
+            
         },
         isRead: {
             type: DataTypes.BOOLEAN,
